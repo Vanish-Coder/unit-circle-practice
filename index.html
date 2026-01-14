@@ -61,7 +61,8 @@ button { padding:8px 14px; font-weight:bold; cursor:pointer; min-width:70px; }
   border-radius:4px;
   z-index:9999;
 }
-#floatingPanel button { font-size:20px; padding:4px 10px; margin:2px; cursor:pointer; }
+#floatingPanel button { font-size:20px; padding:4px 10px; margin:2px; cursor:pointer; outline:none; border:none; background:#eee; border-radius:3px; }
+#floatingPanel button:active { background:#ccc; }
 
 @media (max-width:800px){
   table th, table td { font-size:14px; padding:6px; }
@@ -117,8 +118,8 @@ button { padding:8px 14px; font-weight:bold; cursor:pointer; min-width:70px; }
 </div>
 
 <div id="floatingPanel">
-  <button type="button" onclick="insertFloatingSymbol('√', event)">√</button>
-  <button type="button" onclick="insertFloatingSymbol('π', event)">π</button>
+  <button type="button" tabindex="-1" onclick="insertFloatingSymbol('√', event)">√</button>
+  <button type="button" tabindex="-1" onclick="insertFloatingSymbol('π', event)">π</button>
 </div>
 
 <script>
@@ -229,7 +230,6 @@ function insertFloatingSymbol(symbol,e){
   input.value=value.slice(0,start)+symbol+value.slice(end);
   input.selectionStart=input.selectionEnd=start+symbol.length;
   input.focus();
-  hideFloatingPanel();
 }
 function showFloatingPanel(input){
   lastFocusedInput=input;
