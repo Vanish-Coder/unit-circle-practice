@@ -14,9 +14,32 @@ body {
   padding: 20px;
 }
 
+/* FIXED SYMBOL PANEL */
+#symbolPanel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  padding: 10px 0;
+  z-index: 1000;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.symbol-buttons button {
+  font-size: 24px;
+  padding: 8px 16px;
+  margin: 5px;
+  cursor: pointer;
+}
+
+/* MAIN CONTAINER */
 .container {
   max-width: 900px;
   margin: 0 auto;
+  margin-top: 80px; /* space for fixed symbol panel */
 }
 
 h1 {
@@ -62,7 +85,7 @@ td input {
   width: 100%;
   padding: 6px;
   text-align: center;
-  font-size: 16px; /* Prevents mobile zoom */
+  font-size: 16px; /* prevents mobile zoom */
   line-height: 1.2;
 }
 
@@ -85,35 +108,8 @@ button {
   min-width: 80px;
 }
 
-/* SYMBOL PANEL */
-.symbol-panel {
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-.symbol-buttons button {
-  font-size: 24px;
-  padding: 8px 16px;
-  margin: 5px;
-  cursor: pointer;
-}
-
-/* Sticky symbols for mobile */
+/* Responsive adjustments */
 @media (max-width: 800px) {
-  #symbolPanel {
-    position: sticky;
-    top: 0;
-    background: #fff;
-    padding: 5px 0;
-    z-index: 10;
-    border-bottom: 1px solid #ccc;
-  }
-
-  .symbol-buttons button {
-    font-size: 28px;
-    padding: 10px 20px;
-  }
-
   table th, table td {
     font-size: 14px;
     padding: 6px;
@@ -123,23 +119,28 @@ button {
     width: 90%;
     height: auto;
   }
+
+  .symbol-buttons button {
+    font-size: 28px;
+    padding: 10px 20px;
+  }
 }
 </style>
 </head>
 
 <body>
+<!-- FIXED SYMBOL PANEL -->
+<div id="symbolPanel">
+  <strong>Insert symbol:</strong>
+  <div class="symbol-buttons">
+    <button type="button" onclick="insertSymbol('√')">√</button>
+    <button type="button" onclick="insertSymbol('π')">π</button>
+  </div>
+</div>
+
 <div class="container">
   <h1>Unit Circle – Solve for All Values</h1>
   <div id="timer">Time: <span id="timeDisplay">00:00</span></div>
-
-  <!-- STICKY SYMBOL PANEL -->
-  <div id="symbolPanel" class="symbol-panel">
-    <strong>Insert symbol:</strong>
-    <div class="symbol-buttons">
-      <button type="button" onclick="insertSymbol('√')">√</button>
-      <button type="button" onclick="insertSymbol('π')">π</button>
-    </div>
-  </div>
 
   <div class="flex-container">
     <!-- TABLE -->
