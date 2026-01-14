@@ -6,7 +6,7 @@
 <img width="250" height="250" alt="qrcode_vanish-coder github io" src="https://github.com/user-attachments/assets/24281cbc-beb6-4ada-b703-b694a835776b" />
 
 
-### Practice site for unit circle values and trig values.
+### This is a practice site for unit circle values and trig values.
 
 ### Press restart to rerun your numbers (and restart the timer) and press done to check your work.
 
