@@ -21,6 +21,12 @@
 
     h1 {
       text-align: center;
+      margin-bottom: 10px;
+    }
+
+    #timer {
+      text-align: center;
+      font-size: 18px;
       margin-bottom: 20px;
     }
 
@@ -76,6 +82,14 @@
       margin: 5px;
       cursor: pointer;
     }
+
+    /* Responsive flex wrap */
+    @media (max-width: 800px) {
+      .flex-container {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
   </style>
 </head>
 
@@ -83,7 +97,13 @@
 <div class="container">
   <h1>Unit Circle – Solve for All Values</h1>
 
-  <div style="display:flex; gap:30px; align-items:flex-start; flex-wrap: wrap;">
+  <!-- TIMER -->
+  <div id="timer">
+    Time: <span id="timeDisplay">00:00</span>
+  </div>
+
+  <div class="flex-container" style="display:flex; gap:30px; align-items:flex-start; flex-wrap: wrap;">
+    <!-- TABLE -->
     <div style="flex:1; min-width: 300px;">
       <table>
         <thead>
@@ -107,19 +127,13 @@
       viewBox="0 0 300 300"
       style="border:2px solid #000; background:white; border-radius:4px;"
     >
-      <!-- Circle -->
       <circle cx="150" cy="150" r="120" fill="none" stroke="black" stroke-width="2"/>
-
-      <!-- Axes -->
       <line x1="30" y1="150" x2="270" y2="150" stroke="black" stroke-width="2"/>
       <line x1="150" y1="30" x2="150" y2="270" stroke="black" stroke-width="2"/>
-
-      <!-- Axis labels -->
       <text x="265" y="145" font-size="12" font-weight="bold">1</text>
       <text x="140" y="25" font-size="12" font-weight="bold">1</text>
       <text x="35" y="155" font-size="12" font-weight="bold">-1</text>
       <text x="145" y="290" font-size="12" font-weight="bold">-1</text>
-
       <g id="angleLines"></g>
       <g id="anglePoints"></g>
     </svg>
@@ -161,147 +175,36 @@ const unitCircleValues = [
   { degrees: 330, radians: "11π/6", sin: "-1/2", cos: "√3/2", tan: "-1/√3" }
 ];
 
-/* ------------------ UTILITY FUNCTIONS ------------------ */
-function shuffle(array) {
-  const arr = [...array];
-  for (let i = arr.length -1; i>0; i--) {
-    const j = Math.floor(Math.random()*(i+1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
-
-function generateProblems() {
-  const shuffled = shuffle(unitCircleValues);
-  return shuffled.map(row => {
-    const givenType = Math.random() > 0.5 ? "radians" : "degrees";
-    return {
-      degrees: row.degrees,
-      radians: row.radians,
-      sin: row.sin,
-      cos: row.cos,
-      tan: row.tan,
-      givenType: givenType,
-      userAnswers: { radians:"", degrees:"", sin:"", cos:"", tan:"" }
-    };
-  });
-}
-
-function checkAnswer(problem, column, userAnswer) {
-  const correctAnswer = problem[column];
-  const normalized = userAnswer.trim().replace(/\s/g,"").replace("°","");
-  const normalizedAnswer = correctAnswer.toString().replace(/\s/g,"").replace("°","");
-
-  if (normalized === normalizedAnswer) return true;
-
-  // Accept alternative forms
-  const alternatives = getAlternativeForms(normalizedAnswer);
-  return alternatives.includes(normalized);
-}
-
-function getAlternativeForms(answer) {
-  const forms = [answer];
-  if (answer === "1/√3") forms.push("√3/3");
-  if (answer === "√3/3") forms.push("1/√3");
-  if (answer === "-1/√3") forms.push("-√3/3");
-  if (answer === "-√3/3") forms.push("-1/√3");
-  if (answer === "und.") forms.push("undefined","und");
-  return forms;
-}
+/* ------------------ UTILITY ------------------ */
+function shuffle(array){ const arr=[...array]; for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]];} return arr;}
+function generateProblems(){ const shuffled=shuffle(unitCircleValues); return shuffled.map(row=>{ const givenType=Math.random()>0.5?"radians":"degrees"; return { degrees:row.degrees,radians:row.radians,sin:row.sin,cos:row.cos,tan:row.tan,givenType:givenType,userAnswers:{radians:"",degrees:"",sin:"",cos:"",tan:""} }; });}
+function checkAnswer(problem,column,userAnswer){ const correctAnswer=problem[column]; const normalized=userAnswer.trim().replace(/\s/g,"").replace("°",""); const normalizedAnswer=correctAnswer.toString().replace(/\s/g,"").replace("°",""); if(normalized===normalizedAnswer)return true; const alternatives=getAlternativeForms(normalizedAnswer); return alternatives.includes(normalized);}
+function getAlternativeForms(answer){ const forms=[answer]; if(answer==="1/√3") forms.push("√3/3"); if(answer==="√3/3") forms.push("1/√3"); if(answer==="-1/√3") forms.push("-√3/3"); if(answer==="-√3/3") forms.push("-1/√3"); if(answer==="und.") forms.push("undefined","und"); return forms;}
 
 /* ------------------ GLOBALS ------------------ */
-let problems = [];
-let lastFocusedInput = null;
+let problems=[];
+let lastFocusedInput=null;
+
+/* ------------------ TIMER ------------------ */
+let timerInterval;
+let totalSeconds=0;
+function startTimer(){ const display=document.getElementById("timeDisplay"); timerInterval=setInterval(()=>{ totalSeconds++; const mins=String(Math.floor(totalSeconds/60)).padStart(2,"0"); const secs=String(totalSeconds%60).padStart(2,"0"); display.textContent=`${mins}:${secs}`; },1000);}
+function stopTimer(){ clearInterval(timerInterval);}
 
 /* ------------------ INIT ------------------ */
-function init() {
-  problems = generateProblems();
-  renderTable();
-  drawUnitCircle();
-}
+function init(){ problems=generateProblems(); renderTable(); drawUnitCircle(); startTimer(); }
 
-function renderTable() {
-  const tbody = document.getElementById("tableBody");
-  tbody.innerHTML = "";
+function renderTable(){ const tbody=document.getElementById("tableBody"); tbody.innerHTML=""; problems.forEach(p=>{ const row=document.createElement("tr"); ["radians","degrees","sin","cos","tan"].forEach(col=>{ const td=document.createElement("td"); if(p.givenType===col){ td.className="given"; td.textContent=col==="degrees"?p[col]+"°":p[col]; } else { const input=document.createElement("input"); input.addEventListener("focus",()=>lastFocusedInput=input); td.appendChild(input);} row.appendChild(td); }); tbody.appendChild(row); }); }
 
-  problems.forEach(p => {
-    const row = document.createElement("tr");
+function checkAnswers(){ stopTimer(); problems.forEach((p,i)=>{ const cells=document.querySelectorAll("#tableBody tr")[i].children; ["radians","degrees","sin","cos","tan"].forEach((col,j)=>{ const cell=cells[j]; if(cell.classList.contains("given")) return; const input=cell.querySelector("input"); const correct=checkAnswer(p,col,input.value); cell.classList.toggle("correct",correct); cell.classList.toggle("incorrect",!correct); }); }); }
 
-    ["radians","degrees","sin","cos","tan"].forEach(col => {
-      const td = document.createElement("td");
-
-      if (p.givenType === col) {
-        td.className = "given";
-        td.textContent = col==="degrees"? p[col]+"°":p[col];
-      } else {
-        const input = document.createElement("input");
-        input.addEventListener("focus", ()=> lastFocusedInput=input);
-        td.appendChild(input);
-      }
-
-      row.appendChild(td);
-    });
-
-    tbody.appendChild(row);
-  });
-}
-
-function checkAnswers() {
-  problems.forEach((p,i)=>{
-    const cells = document.querySelectorAll("#tableBody tr")[i].children;
-
-    ["radians","degrees","sin","cos","tan"].forEach((col,j)=>{
-      const cell = cells[j];
-      if (cell.classList.contains("given")) return;
-
-      const input = cell.querySelector("input");
-      const correct = checkAnswer(p,col,input.value);
-      cell.classList.toggle("correct", correct);
-      cell.classList.toggle("incorrect", !correct);
-    });
-  });
-}
-
-/* ------------------ UNIT CIRCLE SVG ------------------ */
-function drawUnitCircle() {
-  const points = document.getElementById("anglePoints");
-  const lines = document.getElementById("angleLines");
-  const cx=150, cy=150, r=120;
-  const angles=[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330];
-
-  angles.forEach(deg=>{
-    const rad = deg*Math.PI/180;
-    const x = cx + r*Math.cos(rad);
-    const y = cy - r*Math.sin(rad);
-
-    const line = document.createElementNS("http://www.w3.org/2000/svg","line");
-    line.setAttribute("x1",cx); line.setAttribute("y1",cy);
-    line.setAttribute("x2",x); line.setAttribute("y2",y);
-    line.setAttribute("stroke","#ccc");
-    lines.appendChild(line);
-
-    const pt = document.createElementNS("http://www.w3.org/2000/svg","circle");
-    pt.setAttribute("cx",x); pt.setAttribute("cy",y);
-    pt.setAttribute("r",4); pt.setAttribute("fill","black");
-    points.appendChild(pt);
-  });
-}
+/* ------------------ SVG ------------------ */
+function drawUnitCircle(){ const points=document.getElementById("anglePoints"); const lines=document.getElementById("angleLines"); const cx=150,cy=150,r=120; const angles=[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330]; angles.forEach(deg=>{ const rad=deg*Math.PI/180; const x=cx+r*Math.cos(rad); const y=cy-r*Math.sin(rad); const line=document.createElementNS("http://www.w3.org/2000/svg","line"); line.setAttribute("x1",cx); line.setAttribute("y1",cy); line.setAttribute("x2",x); line.setAttribute("y2",y); line.setAttribute("stroke","#ccc"); lines.appendChild(line); const pt=document.createElementNS("http://www.w3.org/2000/svg","circle"); pt.setAttribute("cx",x); pt.setAttribute("cy",y); pt.setAttribute("r",4); pt.setAttribute("fill","black"); points.appendChild(pt); }); }
 
 /* ------------------ SYMBOL BUTTONS ------------------ */
-function insertSymbol(symbol) {
-  if (!lastFocusedInput) return;
-  const start = lastFocusedInput.selectionStart;
-  const end = lastFocusedInput.selectionEnd;
-  const value = lastFocusedInput.value;
+function insertSymbol(symbol){ if(!lastFocusedInput) return; const start=lastFocusedInput.selectionStart; const end=lastFocusedInput.selectionEnd; const value=lastFocusedInput.value; lastFocusedInput.value=value.slice(0,start)+symbol+value.slice(end); lastFocusedInput.selectionStart=lastFocusedInput.selectionEnd=start+symbol.length; lastFocusedInput.focus(); }
 
-  lastFocusedInput.value = value.slice(0,start) + symbol + value.slice(end);
-  lastFocusedInput.selectionStart = lastFocusedInput.selectionEnd = start + symbol.length;
-  lastFocusedInput.focus();
-}
-
-document.addEventListener("focusin", e=>{
-  if(e.target.tagName==="INPUT") lastFocusedInput = e.target;
-});
+document.addEventListener("focusin", e=>{ if(e.target.tagName==="INPUT") lastFocusedInput=e.target; });
 
 /* ------------------ START ------------------ */
 init();
