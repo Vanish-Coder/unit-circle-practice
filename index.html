@@ -92,7 +92,7 @@
 <div class="container">
   <h1>Unit Circle – Solve for All Values</h1>
 
-  <div style="display: flex; gap: 30px;">
+  <div style="display: flex; gap: 30px; align-items: flex-start;">
     <div style="flex: 1;">
       <table>
         <thead>
@@ -108,12 +108,36 @@
       </table>
     </div>
 
-    <!-- SYMBOL BUTTONS -->
-    <div class="symbol-panel">
-      <strong>Insert symbol</strong>
-      <div class="symbol-buttons">
-        <button onclick="insertSymbol('√')">√</button>
-        <button onclick="insertSymbol('π')">π</button>
+    <!-- UNIT CIRCLE -->
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+      <svg width="300" height="300" style="border: 2px solid #000; background: white; border-radius: 4px;">
+        <!-- Circle -->
+        <circle cx="150" cy="150" r="120" fill="none" stroke="#000" stroke-width="2"/>
+        
+        <!-- Axes -->
+        <line x1="30" y1="150" x2="270" y2="150" stroke="#000" stroke-width="2"/>
+        <line x1="150" y1="30" x2="150" y2="270" stroke="#000" stroke-width="2"/>
+        
+        <!-- Axis labels -->
+        <text x="265" y="145" font-size="12" font-weight="bold">1</text>
+        <text x="140" y="25" font-size="12" font-weight="bold">1</text>
+        <text x="35" y="155" font-size="12" font-weight="bold">-1</text>
+        <text x="150" y="280" font-size="12" font-weight="bold">-1</text>
+        
+        <!-- Grid lines at key angles -->
+        <g id="angleLines"></g>
+        
+        <!-- Points -->
+        <g id="anglePoints"></g>
+      </svg>
+
+      <!-- SYMBOL BUTTONS -->
+      <div class="symbol-panel">
+        <strong>Insert symbol</strong>
+        <div class="symbol-buttons">
+          <button onclick="insertSymbol('√')">√</button>
+          <button onclick="insertSymbol('π')">π</button>
+        </div>
       </div>
     </div>
   </div>
@@ -133,6 +157,57 @@
   function init() {
     problems = generateProblems();
     renderTable();
+    drawUnitCircle();
+  }
+
+  function drawUnitCircle() {
+    const pointsGroup = document.getElementById("anglePoints");
+    const linesGroup = document.getElementById("angleLines");
+    const cx = 150, cy = 150, radius = 120;
+    
+    // All 16 angles
+    const angles = [
+      { degrees: 0, label: "0" },
+      { degrees: 30, label: "π/6" },
+      { degrees: 45, label: "π/4" },
+      { degrees: 60, label: "π/3" },
+      { degrees: 90, label: "π/2" },
+      { degrees: 120, label: "2π/3" },
+      { degrees: 135, label: "3π/4" },
+      { degrees: 150, label: "5π/6" },
+      { degrees: 180, label: "π" },
+      { degrees: 210, label: "7π/6" },
+      { degrees: 225, label: "5π/4" },
+      { degrees: 240, label: "4π/3" },
+      { degrees: 270, label: "3π/2" },
+      { degrees: 300, label: "5π/3" },
+      { degrees: 315, label: "7π/4" },
+      { degrees: 330, label: "11π/6" }
+    ];
+    
+    angles.forEach(angle => {
+      const radians = (angle.degrees * Math.PI) / 180;
+      const x = cx + radius * Math.cos(radians);
+      const y = cy - radius * Math.sin(radians);
+      
+      // Line from center to point
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("x1", cx);
+      line.setAttribute("y1", cy);
+      line.setAttribute("x2", x);
+      line.setAttribute("y2", y);
+      line.setAttribute("stroke", "#ccc");
+      line.setAttribute("stroke-width", "1");
+      linesGroup.appendChild(line);
+      
+      // Point on circle
+      const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      circle.setAttribute("cx", x);
+      circle.setAttribute("cy", y);
+      circle.setAttribute("r", "4");
+      circle.setAttribute("fill", "#000");
+      pointsGroup.appendChild(circle);
+    });
   }
 
   function renderTable() {
@@ -185,17 +260,26 @@
   }
 
   function checkAnswers() {
-    let correct = 0;
+    let inputIndex = 0;
 
     problems.forEach((p, i) => {
-      ["radians","degrees","sin","cos","tan"].forEach(col => {
-        const input = document.querySelectorAll("input")[correct];
+      const cells = document.querySelectorAll("tbody tr")[i].querySelectorAll("td");
+      
+      ["radians","degrees","sin","cos","tan"].forEach((col, colIndex) => {
+        const cell = cells[colIndex];
+        
+        // Skip given cells
+        if (cell.classList.contains("given")) {
+          return;
+        }
+        
+        const input = cell.querySelector("input");
         if (!input) return;
 
         if (checkAnswer(p, col, input.value)) {
-          input.parentElement.classList.add("correct");
+          cell.classList.add("correct");
         } else {
-          input.parentElement.classList.add("incorrect");
+          cell.classList.add("incorrect");
         }
       });
     });
