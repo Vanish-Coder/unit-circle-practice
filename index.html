@@ -16,16 +16,28 @@ body { background:#fff; }
   background: #f8f8f8;
   height: 200px; /* 2.5x bigger than original 80px */
   border-bottom:1px solid #ccc;
-  text-align:center;
-  box-shadow:0 1px 2px rgba(0,0,0,0.1);
   display:flex;
-  justify-content:center;
   align-items:center;
+  justify-content: space-around; /* space between mini circle and buttons */
+  box-shadow:0 1px 2px rgba(0,0,0,0.1);
 }
 
 #topMiniCircle {
   height: 100%; /* fills the top bar height */
   width: auto; /* maintain aspect ratio */
+}
+
+.topButtons {
+  display:flex;
+  flex-direction: column;
+  gap:10px;
+}
+
+.topButtons button {
+  padding:8px 14px;
+  font-weight:bold;
+  cursor:pointer;
+  min-width:70px;
 }
 
 #scrollContainer {
@@ -84,13 +96,13 @@ button { padding:8px 14px; font-weight:bold; cursor:pointer; min-width:70px; }
   table th, table td { font-size:14px; padding:6px; }
   svg { width:90%; height:auto; }
   .symbol { font-size:24px; padding:6px 12px; }
-  .buttons button { font-size:14px; padding:6px 10px; }
+  .topButtons button { font-size:14px; padding:6px 10px; }
 }
 </style>
 </head>
 <body>
 
-<!-- Top bar with mini unit circle -->
+<!-- Top bar with mini unit circle and buttons -->
 <div id="topPanel">
   <svg id="topMiniCircle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">
     <circle cx="150" cy="150" r="120" fill="none" stroke="black" stroke-width="2"/>
@@ -103,6 +115,11 @@ button { padding:8px 14px; font-weight:bold; cursor:pointer; min-width:70px; }
     <g id="miniAngleLines"></g>
     <g id="miniAnglePoints"></g>
   </svg>
+
+  <div class="topButtons">
+    <button onclick="checkAnswers()">Done</button>
+    <button onclick="location.reload()">Restart</button>
+  </div>
 </div>
 
 <div id="scrollContainer">
@@ -138,11 +155,6 @@ button { padding:8px 14px; font-weight:bold; cursor:pointer; min-width:70px; }
         <g id="anglePoints"></g>
       </svg>
     </div>
-  </div>
-
-  <div class="buttons">
-    <button onclick="checkAnswers()">Done</button>
-    <button onclick="location.reload()">Restart</button>
   </div>
 </div>
 
@@ -256,8 +268,8 @@ function drawMiniCircle(){
     const x=cx+r*Math.cos(rad); 
     const y=cy-r*Math.sin(rad); 
     const line=document.createElementNS("http://www.w3.org/2000/svg","line"); 
-    line.setAttribute("x1",cx); line.setAttribute("y1",cy); line.setAttribute("x2",x); line.setAttribute("y2",y); line.setAttribute("stroke","#ccc"); 
-    line.setAttribute("stroke-width","1");
+    line.setAttribute("x1",cx); line.setAttribute("y1",cy); line.setAttribute("x2",x); line.setAttribute("y2",y); 
+    line.setAttribute("stroke","#ccc"); line.setAttribute("stroke-width","1");
     lines.appendChild(line); 
     const pt=document.createElementNS("http://www.w3.org/2000/svg","circle"); 
     pt.setAttribute("cx",x); pt.setAttribute("cy",y); pt.setAttribute("r",2); pt.setAttribute("fill","black"); 
