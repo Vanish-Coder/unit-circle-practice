@@ -57,9 +57,46 @@ function generateProblems() {
 function checkAnswer(problem, column, userAnswer) {
   const correctAnswer = problem[column];
   
-  // Normalize for comparison
-  const normalized = userAnswer.trim().replace(/\s/g, "");
-  const normalizedAnswer = correctAnswer.toString().replace(/\s/g, "");
+  // Normalize for comparison - remove spaces and degree symbols
+  const normalized = userAnswer.trim().replace(/\s/g, "").replace("°", "");
+  const normalizedAnswer = correctAnswer.toString().replace(/\s/g, "").replace("°", "");
   
-  return normalized === normalizedAnswer;
+  console.log(`Checking ${column}: "${normalized}" vs "${normalizedAnswer}"`);
+  
+  if (normalized === normalizedAnswer) {
+    return true;
+  }
+  
+  // Check for alternative forms (e.g., "√3" vs "√(3)")
+  const alternatives = getAlternativeForms(normalizedAnswer);
+  return alternatives.includes(normalized);
+}
+
+// Generate alternative valid forms of an answer
+function getAlternativeForms(answer) {
+  const forms = [answer];
+  
+  // For forms like "1/√3", also accept "√3/3" (rationalized)
+  if (answer === "1/√3") {
+    forms.push("√3/3");
+  }
+  if (answer === "√3/3") {
+    forms.push("1/√3");
+  }
+  
+  // For "und." also accept "undefined" and "und"
+  if (answer === "und.") {
+    forms.push("undefined");
+    forms.push("und");
+  }
+  
+  // For negative fractions
+  if (answer === "-1/√3") {
+    forms.push("-√3/3");
+  }
+  if (answer === "-√3/3") {
+    forms.push("-1/√3");
+  }
+  
+  return forms;
 }
