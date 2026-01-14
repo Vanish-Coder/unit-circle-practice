@@ -6,7 +6,7 @@
 <title>Unit Circle Practice</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-html, body { height:100%; font-family: Arial, sans-serif; } 
+html, body { height:100%; font-family: Arial, sans-serif; }
 body { background:#fff; }
 
 #topPanel {
@@ -61,13 +61,22 @@ button { padding:8px 14px; font-weight:bold; cursor:pointer; min-width:70px; }
   border-radius:4px;
   z-index:9999;
 }
-#floatingPanel button { font-size:20px; padding:4px 10px; margin:2px; cursor:pointer; outline:none; border:none; background:#eee; border-radius:3px; }
-#floatingPanel button:active { background:#ccc; }
+.symbol {
+  display:inline-block;
+  font-size:20px;
+  padding:4px 10px;
+  margin:2px;
+  background:#eee;
+  border-radius:3px;
+  cursor:pointer;
+  user-select:none;
+}
+.symbol:active { background:#ccc; }
 
 @media (max-width:800px){
   table th, table td { font-size:14px; padding:6px; }
   svg { width:90%; height:auto; }
-  #floatingPanel button { font-size:24px; padding:6px 12px; }
+  .symbol { font-size:24px; padding:6px 12px; }
   .buttons button { font-size:14px; padding:6px 10px; }
 }
 </style>
@@ -118,8 +127,8 @@ button { padding:8px 14px; font-weight:bold; cursor:pointer; min-width:70px; }
 </div>
 
 <div id="floatingPanel">
-  <button type="button" tabindex="-1" onclick="insertFloatingSymbol('√', event)">√</button>
-  <button type="button" tabindex="-1" onclick="insertFloatingSymbol('π', event)">π</button>
+  <div class="symbol" data-symbol="√">√</div>
+  <div class="symbol" data-symbol="π">π</div>
 </div>
 
 <script>
@@ -219,18 +228,6 @@ function drawUnitCircle(){
 
 /* ------------------ SYMBOL PANEL ------------------ */
 const floatingPanel=document.getElementById("floatingPanel");
-function insertFloatingSymbol(symbol,e){
-  e.preventDefault();
-  e.stopPropagation();
-  if(!lastFocusedInput) return;
-  const input=lastFocusedInput;
-  const start=input.selectionStart;
-  const end=input.selectionEnd;
-  const value=input.value;
-  input.value=value.slice(0,start)+symbol+value.slice(end);
-  input.selectionStart=input.selectionEnd=start+symbol.length;
-  input.focus();
-}
 function showFloatingPanel(input){
   lastFocusedInput=input;
   const rect=input.getBoundingClientRect();
@@ -239,6 +236,24 @@ function showFloatingPanel(input){
   floatingPanel.style.left=(window.scrollX+rect.left)+"px";
 }
 function hideFloatingPanel(){ floatingPanel.style.display="none"; }
+
+// Brute-force: use divs + mousedown + touchstart for desktop+mobile
+floatingPanel.querySelectorAll(".symbol").forEach(div=>{
+  const insertSymbol=(e)=>{
+    e.preventDefault();
+    if(!lastFocusedInput) return;
+    const sym=div.dataset.symbol;
+    const input=lastFocusedInput;
+    const start=input.selectionStart;
+    const end=input.selectionEnd;
+    const value=input.value;
+    input.value=value.slice(0,start)+sym+value.slice(end);
+    input.selectionStart=input.selectionEnd=start+sym.length;
+    input.focus();
+  };
+  div.addEventListener("mousedown", insertSymbol);
+  div.addEventListener("touchstart", insertSymbol);
+});
 
 /* ------------------ INIT ------------------ */
 function init(){ problems=generateProblems(); renderTable(); drawUnitCircle(); startTimer(); }
