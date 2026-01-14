@@ -6,16 +6,17 @@
 <title>Unit Circle Practice</title>
 
 <style>
-/* ---------- GLOBAL ---------- */
 * { margin:0; padding:0; box-sizing:border-box; }
-html, body { height: 100%; -webkit-overflow-scrolling: touch; }
-body { font-family: Arial, sans-serif; background: #fff; padding: 0 10px; }
+html, body { height: 100%; font-family: Arial, sans-serif; }
+body { background: #fff; padding: 0 10px; }
 
-/* ---------- STICKY SYMBOL PANEL ---------- */
+/* ---------- FIXED SYMBOL PANEL ---------- */
 #symbolPanel {
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 1000;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
   background: #fff;
   padding: 10px 0;
   border-bottom: 2px solid #ccc;
@@ -30,10 +31,11 @@ body { font-family: Arial, sans-serif; background: #fff; padding: 0 10px; }
   cursor: pointer;
 }
 
-/* ---------- SCROLLABLE MAIN CONTENT ---------- */
+/* ---------- MAIN CONTENT ---------- */
 #mainContent {
   max-width: 900px;
   margin: 0 auto;
+  margin-top: 70px; /* leave space for fixed panel */
   padding-bottom: 50px;
 }
 
@@ -72,7 +74,7 @@ button { padding: 10px 16px; font-weight: bold; cursor: pointer; min-width: 80px
 </head>
 
 <body>
-<!-- SYMBOL PANEL -->
+<!-- FIXED SYMBOL PANEL -->
 <div id="symbolPanel">
   <strong>Insert symbol:</strong>
   <div class="symbol-buttons">
@@ -184,14 +186,16 @@ function insertSymbol(symbol){
   lastFocusedInput.focus(); 
 }
 
-/* ------------------ SCROLL SYMBOL PANEL INTO VIEW ON INPUT FOCUS ------------------ */
-const symbolPanel=document.getElementById("symbolPanel");
-document.addEventListener("focusin", e=>{
-  if(e.target.tagName==="INPUT"){ 
-    lastFocusedInput=e.target;
-    symbolPanel.scrollIntoView({behavior:"smooth"});
-  }
-});
+/* ------------------ BRUTE-FORCE FIX FOR MOBILE PANEL ------------------ */
+const symbolPanel = document.getElementById("symbolPanel");
+function forcePanelVisible(){
+  symbolPanel.style.top = "0px";
+  symbolPanel.style.transform = "translateY(0)";
+}
+document.addEventListener("focusin", forcePanelVisible);
+document.addEventListener("touchstart", forcePanelVisible);
+window.addEventListener("resize", forcePanelVisible);
+setInterval(forcePanelVisible, 100); // repeated brute-force every 100ms
 
 /* ------------------ INIT ------------------ */
 function init(){ problems=generateProblems(); renderTable(); drawUnitCircle(); startTimer(); }
