@@ -27,10 +27,10 @@ h1 {
 #timer {
   text-align: center;
   font-size: 18px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
-/* Flex container for table + SVG + symbols */
+/* Flex container for table + SVG */
 .flex-container {
   display: flex;
   gap: 20px;
@@ -83,10 +83,10 @@ button {
   min-width: 80px;
 }
 
-/* Symbol panel */
+/* SYMBOL PANEL */
 .symbol-panel {
   text-align: center;
-  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .symbol-buttons button {
@@ -96,13 +96,17 @@ button {
   cursor: pointer;
 }
 
-/* Responsive tweaks */
+/* Sticky symbols for mobile */
 @media (max-width: 800px) {
-  .flex-container {
-    flex-direction: column;
-    align-items: center;
+  #symbolPanel {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    padding: 5px 0;
+    z-index: 10;
+    border-bottom: 1px solid #ccc;
   }
-  
+
   .symbol-buttons button {
     font-size: 28px;
     padding: 10px 20px;
@@ -126,6 +130,15 @@ button {
   <h1>Unit Circle – Solve for All Values</h1>
   <div id="timer">Time: <span id="timeDisplay">00:00</span></div>
 
+  <!-- STICKY SYMBOL PANEL -->
+  <div id="symbolPanel" class="symbol-panel">
+    <strong>Insert symbol:</strong>
+    <div class="symbol-buttons">
+      <button type="button" onclick="insertSymbol('√')">√</button>
+      <button type="button" onclick="insertSymbol('π')">π</button>
+    </div>
+  </div>
+
   <div class="flex-container">
     <!-- TABLE -->
     <div class="flex-item">
@@ -141,15 +154,6 @@ button {
         </thead>
         <tbody id="tableBody"></tbody>
       </table>
-
-      <!-- SYMBOL BUTTONS BELOW TABLE ON MOBILE -->
-      <div class="symbol-panel">
-        <strong>Insert symbol:</strong>
-        <div class="symbol-buttons">
-          <button type="button" onclick="insertSymbol('√')">√</button>
-          <button type="button" onclick="insertSymbol('π')">π</button>
-        </div>
-      </div>
     </div>
 
     <!-- UNIT CIRCLE SVG -->
@@ -221,7 +225,6 @@ document.addEventListener("focusin",e=>{ if(e.target.tagName==="INPUT") lastFocu
 
 /* ------------------ INIT ------------------ */
 function init(){ problems=generateProblems(); renderTable(); drawUnitCircle(); startTimer(); }
-
 init();
 </script>
 </body>
