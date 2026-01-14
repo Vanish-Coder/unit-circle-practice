@@ -4,12 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Unit Circle Practice</title>
+
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: Arial, sans-serif;
@@ -28,13 +25,6 @@
       font-size: 24px;
     }
 
-    .timer {
-      text-align: center;
-      font-size: 18px;
-      margin-bottom: 20px;
-      font-weight: bold;
-    }
-
     table {
       width: 100%;
       border-collapse: collapse;
@@ -42,20 +32,10 @@
       margin-bottom: 30px;
     }
 
-    th {
-      border: 1px solid #000;
-      padding: 12px;
-      background: #f0f0f0;
-      font-weight: bold;
-      text-align: center;
-    }
-
-    td {
+    th, td {
       border: 1px solid #000;
       padding: 12px;
       text-align: center;
-      height: 40px;
-      position: relative;
     }
 
     td input {
@@ -63,284 +43,165 @@
       padding: 6px;
       border: 2px solid #999;
       text-align: center;
-      font-family: Arial, sans-serif;
       font-size: 14px;
-    }
-
-    td input:focus {
-      outline: none;
-      border: 2px solid #667eea;
-      background: #fffacd;
     }
 
     td.given {
       background: #f9f9f9;
-      color: #333;
       font-weight: bold;
     }
 
-    td.correct {
-      background: #90EE90;
-    }
-
-    td.incorrect {
-      background: #FFB6C6;
-    }
+    td.correct { background: #90EE90; }
+    td.incorrect { background: #FFB6C6; }
 
     .feedback {
       position: absolute;
       right: 5px;
       top: 50%;
       transform: translateY(-50%);
-      font-size: 18px;
       font-weight: bold;
-    }
-
-    .correct-mark {
-      color: #28a745;
-    }
-
-    .incorrect-mark {
-      color: #dc3545;
     }
 
     .buttons {
       display: flex;
-      gap: 15px;
       justify-content: center;
+      gap: 20px;
     }
 
     button {
-      padding: 10px 25px;
-      font-size: 14px;
-      border: 1px solid #000;
-      background: #f0f0f0;
+      padding: 10px 20px;
+      font-weight: bold;
       cursor: pointer;
-      font-weight: bold;
     }
 
-    button:hover {
-      background: #e0e0e0;
-    }
-
-    #rerollBtn {
-      display: none;
-    }
-
-    .stats {
+    .symbol-panel {
       text-align: center;
-      margin-top: 20px;
-      font-size: 16px;
-      font-weight: bold;
-      display: none;
+      font-size: 18px;
+    }
+
+    .symbol-buttons button {
+      font-size: 36px;
+      padding: 10px 20px;
+      margin: 10px;
+      cursor: pointer;
     }
   </style>
 </head>
+
 <body>
-  <div class="container">
-    <h1>Unit Circle - Solve for All Values</h1>
-    <p style="text-align: center; font-size: 14px; margin-bottom: 20px; color: #666;">
-      <strong>Note:</strong> For undefined tan values, type <strong>und.</strong>
-    </p>
-    
-    <div class="timer" id="timerDisplay">Time: 0s</div>
-    
-    <svg viewBox="0 0 300 300" width="300" height="300" style="display: block; margin: 20px auto; border: 1px solid #ccc;">
-      <!-- Circle -->
-      <circle cx="150" cy="150" r="100" fill="none" stroke="#000" stroke-width="1.5"/>
-      <!-- Axes -->
-      <line x1="50" y1="150" x2="250" y2="150" stroke="#000" stroke-width="1"/>
-      <line x1="150" y1="50" x2="150" y2="250" stroke="#000" stroke-width="1"/>
-      <!-- Gridlines -->
-      <line x1="150" y1="50" x2="150" y2="55" stroke="#000" stroke-width="1"/>
-      <line x1="150" y1="245" x2="150" y2="250" stroke="#000" stroke-width="1"/>
-      <line x1="50" y1="150" x2="55" y2="150" stroke="#000" stroke-width="1"/>
-      <line x1="245" y1="150" x2="250" y2="150" stroke="#000" stroke-width="1"/>
-      <!-- 16 rays for each angle -->
-      <line x1="150" y1="150" x2="150" y2="50" stroke="#999" stroke-width="0.8"/>
-      <line x1="150" y1="150" x2="237.5" y2="100.8" stroke="#999" stroke-width="0.8"/>
-      <line x1="150" y1="150" x2="220.7" y2="70.7" stroke="#999" stroke-width="0.8"/>
-      <line x1="150" y1="150" x2="200.8" y2="50.8" stroke="#999" stroke-width="0.8"/>
-      <line x1="150" y1="150" x2="250" y2="150" stroke="#999" stroke-width="0.8"/>
-      <line x1="150" y1="150" x2="200.8" y2="249.2" stroke="#999" stroke-width="0.8"/>
-      <line x1="150" y1="150" x2="220.7" y2="229.3" stroke="#999" stroke-width="0.8"/>
-      <line x1="150" y1="150" x2="237.5" y2="199.2" stroke="#999" stroke-width="0.8"/>
-      <line x1="150" y1="150" x2="150" y2="250" stroke="#999" stroke-width="0.8"/>
-      <line x1="150" y1="150" x2="62.5" y2="199.2" stroke="#999" stroke-width="0.8"/>
-      <line x1="150" y1="150" x2="79.3" y2="229.3" stroke="#999" stroke-width="0.8"/>
-      <line x1="150" y1="150" x2="99.2" y2="249.2" stroke="#999" stroke-width="0.8"/>
-      <line x1="150" y1="150" x2="50" y2="150" stroke="#999" stroke-width="0.8"/>
-      <line x1="150" y1="150" x2="99.2" y2="50.8" stroke="#999" stroke-width="0.8"/>
-      <line x1="150" y1="150" x2="79.3" y2="70.7" stroke="#999" stroke-width="0.8"/>
-      <line x1="150" y1="150" x2="62.5" y2="100.8" stroke="#999" stroke-width="0.8"/>
-    </svg>
-    
-    <div style="display: flex; gap: 30px; align-items: flex-start;">
-      <div style="flex: 1;">
-        <table id="problemsTable">
-          <thead>
-            <tr>
-              <th>radian measure</th>
-              <th>m°</th>
-              <th>sin θ</th>
-              <th>cos θ</th>
-              <th>tan θ</th>
-            </tr>
-          </thead>
-          <tbody id="tableBody">
-          </tbody>
-        </table>
-      </div>
-      
-      <div style="font-size: 24px; display: flex; flex-direction: column; align-items: center; gap: 20px; padding-top: 20px; justify-content: center;">
-        <strong style="font-size: 18px; text-align: center; line-height: 1.4;">Copy and paste special symbols from here</strong>
-        <div style="font-size: 60px; letter-spacing: 20px; cursor: default;">√ π</div>
-      </div>
+<div class="container">
+  <h1>Unit Circle – Solve for All Values</h1>
+
+  <div style="display: flex; gap: 30px;">
+    <div style="flex: 1;">
+      <table>
+        <thead>
+          <tr>
+            <th>radians</th>
+            <th>degrees</th>
+            <th>sin</th>
+            <th>cos</th>
+            <th>tan</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
     </div>
 
-    <div class="stats" id="stats">
-      Score: <span id="score">0</span> / <span id="total">0</span>
-    </div>
-
-    <div class="buttons">
-      <button id="checkBtn" onclick="checkAnswers()">Done</button>
-      <button id="rerollBtn" onclick="location.reload()">Restart</button>
+    <!-- SYMBOL BUTTONS -->
+    <div class="symbol-panel">
+      <strong>Insert symbol</strong>
+      <div class="symbol-buttons">
+        <button onclick="insertSymbol('√')">√</button>
+        <button onclick="insertSymbol('π')">π</button>
+      </div>
     </div>
   </div>
 
-  <script src="logicMath.js"></script>
-  <script>
-    let problems = [];
-    let checked = false;
-    let timerInterval = null;
-    let elapsedSeconds = 0;
+  <div class="buttons">
+    <button onclick="checkAnswers()">Done</button>
+    <button onclick="location.reload()">Restart</button>
+  </div>
+</div>
 
-    function updateTimer() {
-      elapsedSeconds++;
-      const minutes = Math.floor(elapsedSeconds / 60);
-      const seconds = elapsedSeconds % 60;
-      const timeStr = minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
-      document.getElementById("timerDisplay").textContent = `Time: ${timeStr}`;
-    }
+<script src="logicMath.js"></script>
 
-    function startTimer() {
-      elapsedSeconds = 0;
-      if (timerInterval) clearInterval(timerInterval);
-      timerInterval = setInterval(updateTimer, 1000);
-    }
+<script>
+  let problems = [];
+  let lastFocusedInput = null;
 
-    function stopTimer() {
-      if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-      }
-    }
+  function init() {
+    problems = generateProblems();
+    renderTable();
+  }
 
-    function init() {
-      problems = generateProblems();
-      checked = false;
-      renderTable();
-      document.getElementById("checkBtn").style.display = "inline-block";
-      document.getElementById("checkBtn").disabled = false;
-      document.getElementById("rerollBtn").style.display = "none";
-      document.getElementById("stats").style.display = "none";
-      startTimer();
-    }
+  function renderTable() {
+    const tbody = document.getElementById("tableBody");
+    tbody.innerHTML = "";
 
-    function renderTable() {
-      const tbody = document.getElementById("tableBody");
-      tbody.innerHTML = "";
+    problems.forEach((p, i) => {
+      const row = document.createElement("tr");
+      ["radians","degrees","sin","cos","tan"].forEach(col => {
+        const cell = document.createElement("td");
 
-      problems.forEach((problem, index) => {
-        const row = document.createElement("tr");
+        if (p.givenType === col) {
+          cell.className = "given";
+          cell.textContent = col === "degrees" ? p[col] + "°" : p[col];
+        } else {
+          const input = document.createElement("input");
+          input.type = "text";
 
-        const columns = ["radians", "degrees", "sin", "cos", "tan"];
+          input.onfocus = () => {
+            lastFocusedInput = input;
+          };
 
-        columns.forEach(col => {
-          const cell = document.createElement("td");
-          
-          if (problem.givenType === col) {
-            // This is the given value
-            cell.className = "given";
-            if (col === "degrees") {
-              cell.textContent = problem.degrees + "°";
-            } else {
-              cell.textContent = problem[col];
-            }
-          } else {
-            // This needs to be filled in
-            const input = document.createElement("input");
-            input.type = "text";
-            input.id = `input-${index}-${col}`;
-            input.placeholder = col;
-            input.disabled = checked;
-            input.onchange = () => {
-            input.onfocus = () => {
-              lastFocusedInput = input;
-            };
-              problem.userAnswers[col] = input.value;
-            };
-            cell.appendChild(input);
-          }
-          
-          row.appendChild(cell);
-        });
+          input.oninput = () => {
+            p.userAnswers[col] = input.value;
+          };
 
-        tbody.appendChild(row);
+          cell.appendChild(input);
+        }
+        row.appendChild(cell);
       });
-    }
+      tbody.appendChild(row);
+    });
+  }
 
-    function checkAnswers() {
-      stopTimer();
-      let correct = 0;
+  function insertSymbol(symbol) {
+    if (!lastFocusedInput) return;
 
-      problems.forEach((problem, index) => {
-        const columns = ["radians", "degrees", "sin", "cos", "tan"];
+    const start = lastFocusedInput.selectionStart;
+    const end = lastFocusedInput.selectionEnd;
+    const value = lastFocusedInput.value;
 
-        columns.forEach(col => {
-          const input = document.getElementById(`input-${index}-${col}`);
-          
-          if (input) {
-            const userAnswer = input.value;
-            const isCorrect = checkAnswer(problem, col, userAnswer);
+    lastFocusedInput.value =
+      value.slice(0, start) + symbol + value.slice(end);
 
-            if (isCorrect) {
-              correct++;
-              input.parentElement.classList.add("correct");
-              input.parentElement.classList.remove("incorrect");
-              const checkmark = document.createElement("span");
-              checkmark.className = "feedback correct-mark";
-              checkmark.textContent = "✓";
-              input.parentElement.appendChild(checkmark);
-            } else {
-              input.parentElement.classList.add("incorrect");
-              input.parentElement.classList.remove("correct");
-              const x = document.createElement("span");
-              x.className = "feedback incorrect-mark";
-              x.textContent = "✗";
-              input.parentElement.appendChild(x);
-            }
+    lastFocusedInput.selectionStart =
+    lastFocusedInput.selectionEnd =
+      start + symbol.length;
 
-            input.disabled = true;
-          }
-        });
+    lastFocusedInput.focus();
+  }
+
+  function checkAnswers() {
+    let correct = 0;
+
+    problems.forEach((p, i) => {
+      ["radians","degrees","sin","cos","tan"].forEach(col => {
+        const input = document.querySelectorAll("input")[correct];
+        if (!input) return;
+
+        if (checkAnswer(p, col, input.value)) {
+          input.parentElement.classList.add("correct");
+        } else {
+          input.parentElement.classList.add("incorrect");
+        }
       });
+    });
+  }
 
-      const totalAnswers = problems.length * 4; // 4 values to solve for per problem
-      document.getElementById("score").textContent = correct;
-      document.getElementById("total").textContent = totalAnswers;
-      document.getElementById("stats").style.display = "block";
-
-      checked = true;
-      document.getElementById("checkBtn").style.display = "none";
-      document.getElementById("rerollBtn").style.display = "inline-block";
-    }
-
-    function reroll() {
-      init();
-    }
-
-    init();
-  </script>
+  init();
+</script>
 </body>
 </html>
