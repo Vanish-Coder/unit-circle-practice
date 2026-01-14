@@ -189,26 +189,45 @@ function checkAnswers(){ stopTimer(); problems.forEach((p,i)=>{ const cells=docu
 /* ------------------ SVG ------------------ */
 function drawUnitCircle(){ const points=document.getElementById("anglePoints"); const lines=document.getElementById("angleLines"); const cx=150,cy=150,r=120; const angles=[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330]; angles.forEach(deg=>{ const rad=deg*Math.PI/180; const x=cx+r*Math.cos(rad); const y=cy-r*Math.sin(rad); const line=document.createElementNS("http://www.w3.org/2000/svg","line"); line.setAttribute("x1",cx); line.setAttribute("y1",cy); line.setAttribute("x2",x); line.setAttribute("y2",y); line.setAttribute("stroke","#ccc"); lines.appendChild(line); const pt=document.createElementNS("http://www.w3.org/2000/svg","circle"); pt.setAttribute("cx",x); pt.setAttribute("cy",y); pt.setAttribute("r",4); pt.setAttribute("fill","black"); points.appendChild(pt); });}
 
-/* ------------------ SYMBOL BUTTONS ------------------ */
-const floatingPanel=document.getElementById("floatingPanel");
-function insertSymbol(symbol){
-  if(!lastFocusedInput) return;
-  const start=lastFocusedInput.selectionStart;
-  const end=lastFocusedInput.selectionEnd;
-  const value=lastFocusedInput.value;
-  lastFocusedInput.value=value.slice(0,start)+symbol+value.slice(end);
-  lastFocusedInput.selectionStart=lastFocusedInput.selectionEnd=start+symbol.length;
-  lastFocusedInput.focus();
+<!-- FLOATING SYMBOL PANEL -->
+<div id="floatingPanel">
+  <button type="button" onclick="insertFloatingSymbol('√', event)">√</button>
+  <button type="button" onclick="insertFloatingSymbol('π', event)">π</button>
+</div>
+
+<script>
+// ------------------ SYMBOL BUTTONS ------------------
+const floatingPanel = document.getElementById("floatingPanel");
+
+function insertFloatingSymbol(symbol, e){
+    e.preventDefault();      // Prevent button from stealing focus
+    e.stopPropagation();
+    if(!lastFocusedInput) return;
+    const input = lastFocusedInput;
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+    const value = input.value;
+    input.value = value.slice(0,start) + symbol + value.slice(end);
+    input.selectionStart = input.selectionEnd = start + symbol.length;
+    input.focus();           // Keep input focused after inserting
+    hideFloatingPanel();     // Hide panel after symbol inserted
 }
+
+// Show panel near input
 function showFloatingPanel(input){
-  const rect=input.getBoundingClientRect();
-  floatingPanel.style.display="block";
-  floatingPanel.style.top=(window.scrollY + rect.top - floatingPanel.offsetHeight - 5)+"px";
-  floatingPanel.style.left=(window.scrollX + rect.left)+"px";
+    lastFocusedInput = input;  // make sure it's updated
+    const rect = input.getBoundingClientRect();
+    floatingPanel.style.display = "block";
+    floatingPanel.style.top = (window.scrollY + rect.top - floatingPanel.offsetHeight - 5) + "px";
+    floatingPanel.style.left = (window.scrollX + rect.left) + "px";
 }
+
+// Hide panel
 function hideFloatingPanel(){
-  floatingPanel.style.display="none";
+    floatingPanel.style.display = "none";
 }
+</script>
+
 
 /* ------------------ INIT ------------------ */
 function init(){ problems=generateProblems(); renderTable(); drawUnitCircle(); startTimer(); }
