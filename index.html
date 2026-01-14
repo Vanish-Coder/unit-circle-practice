@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 <title>Unit Circle Practice</title>
 
 <style>
@@ -62,6 +62,8 @@ td input {
   width: 100%;
   padding: 6px;
   text-align: center;
+  font-size: 16px; /* Prevents mobile zoom */
+  line-height: 1.2;
 }
 
 td.given { background: #f0f0f0; font-weight: bold; }
@@ -202,7 +204,15 @@ const unitCircleValues = [
 let problems=[], lastFocusedInput=null, timerInterval, totalSeconds=0;
 
 /* ------------------ TIMER ------------------ */
-function startTimer(){ const display=document.getElementById("timeDisplay"); timerInterval=setInterval(()=>{ totalSeconds++; const mins=String(Math.floor(totalSeconds/60)).padStart(2,"0"); const secs=String(totalSeconds%60).padStart(2,"0"); display.textContent=`${mins}:${secs}`; },1000);}
+function startTimer(){ 
+  const display=document.getElementById("timeDisplay"); 
+  timerInterval=setInterval(()=>{
+    totalSeconds++; 
+    const mins=String(Math.floor(totalSeconds/60)).padStart(2,"0"); 
+    const secs=String(totalSeconds%60).padStart(2,"0"); 
+    display.textContent=`${mins}:${secs}`;
+  },1000);
+}
 function stopTimer(){ clearInterval(timerInterval);}
 
 /* ------------------ FUNCTIONS ------------------ */
