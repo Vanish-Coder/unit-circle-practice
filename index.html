@@ -14,17 +14,24 @@ body { background:#fff; }
   top: 0; left:0; width:100%;
   z-index: 9998;
   background: #f8f8f8;
-  padding: 5px 0;
+  height: 80px; /* fixed height */
   border-bottom:1px solid #ccc;
   text-align:center;
-  font-size:14px;
   box-shadow:0 1px 2px rgba(0,0,0,0.1);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+#topMiniCircle {
+  height: 100%; /* fills the top bar height */
+  width: auto; /* maintain aspect ratio */
 }
 
 #scrollContainer {
   max-width:900px;
   margin:0 auto;
-  margin-top:40px;
+  margin-top:80px; /* same as topPanel height */
   padding-bottom:200px;
   overflow-y:auto;
 }
@@ -83,7 +90,20 @@ button { padding:8px 14px; font-weight:bold; cursor:pointer; min-width:70px; }
 </head>
 <body>
 
-<div id="topPanel">Symbol Panel Backup: √ π</div>
+<!-- Top bar with mini unit circle -->
+<div id="topPanel">
+  <svg id="topMiniCircle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">
+    <circle cx="150" cy="150" r="120" fill="none" stroke="black" stroke-width="2"/>
+    <line x1="30" y1="150" x2="270" y2="150" stroke="black" stroke-width="2"/>
+    <line x1="150" y1="30" x2="150" y2="270" stroke="black" stroke-width="2"/>
+    <text x="265" y="145" font-size="12" font-weight="bold">1</text>
+    <text x="140" y="25" font-size="12" font-weight="bold">1</text>
+    <text x="35" y="155" font-size="12" font-weight="bold">-1</text>
+    <text x="145" y="290" font-size="12" font-weight="bold">-1</text>
+    <g id="miniAngleLines"></g>
+    <g id="miniAnglePoints"></g>
+  </svg>
+</div>
 
 <div id="scrollContainer">
   <h1>Unit Circle – Solve for All Values</h1>
@@ -106,14 +126,14 @@ button { padding:8px 14px; font-weight:bold; cursor:pointer; min-width:70px; }
     </div>
 
     <div class="flex-item">
-      <svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300" style="border:2px solid #000; background:white; border-radius:4px;">
+      <svg width="300" height="300" style="border:2px solid #000; background:white; border-radius:4px;">
         <circle cx="150" cy="150" r="120" fill="none" stroke="black" stroke-width="2"/>
         <line x1="30" y1="150" x2="270" y2="150" stroke="black" stroke-width="2"/>
         <line x1="150" y1="30" x2="150" y2="270" stroke="black" stroke-width="2"/>
         <text x="265" y="145" font-size="12" font-weight="bold">1</text>
         <text x="140" y="25" font-size="12" font-weight="bold">1</text>
         <text x="35" y="155" font-size="12" font-weight="bold">-1</text>
-        <text x="145" y="290" font-size="12" font-weight="bold">-1</text>
+        <text x="150" y="280" font-size="12" font-weight="bold">-1</text>
         <g id="angleLines"></g>
         <g id="anglePoints"></g>
       </svg>
@@ -226,6 +246,26 @@ function drawUnitCircle(){
   });
 }
 
+/* ------------------ MINI TOP CIRCLE ------------------ */
+function drawMiniCircle(){
+  const points=document.getElementById("miniAnglePoints"); 
+  const lines=document.getElementById("miniAngleLines"); 
+  const cx=150,cy=150,r=120; 
+  const angles=[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330]; 
+  angles.forEach(deg=>{
+    const rad=deg*Math.PI/180; 
+    const x=cx+r*Math.cos(rad); 
+    const y=cy-r*Math.sin(rad); 
+    const line=document.createElementNS("http://www.w3.org/2000/svg","line"); 
+    line.setAttribute("x1",cx); line.setAttribute("y1",cy); line.setAttribute("x2",x); line.setAttribute("y2",y); line.setAttribute("stroke","#ccc"); 
+    line.setAttribute("stroke-width","1");
+    lines.appendChild(line); 
+    const pt=document.createElementNS("http://www.w3.org/2000/svg","circle"); 
+    pt.setAttribute("cx",x); pt.setAttribute("cy",y); pt.setAttribute("r",2); pt.setAttribute("fill","black"); 
+    points.appendChild(pt); 
+  });
+}
+
 /* ------------------ SYMBOL PANEL ------------------ */
 const floatingPanel=document.getElementById("floatingPanel");
 function showFloatingPanel(input){
@@ -237,7 +277,6 @@ function showFloatingPanel(input){
 }
 function hideFloatingPanel(){ floatingPanel.style.display="none"; }
 
-// Brute-force: use divs + mousedown + touchstart for desktop+mobile
 floatingPanel.querySelectorAll(".symbol").forEach(div=>{
   const insertSymbol=(e)=>{
     e.preventDefault();
@@ -256,7 +295,13 @@ floatingPanel.querySelectorAll(".symbol").forEach(div=>{
 });
 
 /* ------------------ INIT ------------------ */
-function init(){ problems=generateProblems(); renderTable(); drawUnitCircle(); startTimer(); }
+function init(){ 
+  problems=generateProblems(); 
+  renderTable(); 
+  drawUnitCircle(); 
+  drawMiniCircle();
+  startTimer(); 
+}
 init();
 </script>
 </body>
