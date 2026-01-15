@@ -24,12 +24,12 @@ body { background:#fff; }
   z-index:10;
 }
 
-  /* ---------- TOP MINI CIRCLE ---------- */
+/* ---------- TOP MINI CIRCLE ---------- */
 #topMiniCircle {
-  width: 150px;    /* 20% of viewport width */
-  height: 150px
+  width: 150px;    
+  height: 150px;
 }
-  
+
 #topTimer { font-size:24px; font-weight:bold; }
 
 .topButtons {
@@ -43,7 +43,6 @@ body { background:#fff; }
   cursor:pointer;
   min-width:90px;
 }
-
 
 /* ---------- MAIN CONTENT ---------- */
 #scrollContainer {
@@ -99,7 +98,7 @@ td.incorrect { background:#ffb6c6; }
 
 /* ---------- SVG RESPONSIVE ---------- */
 .flex-item svg {
-  width: 200px;    /* MOBILE-FRIENDLY SIZE */
+  width: 200px;    
   height: 200px;
   max-width: 100%;
   display: block;
@@ -242,6 +241,11 @@ const unitCircleValues = [
 ];
 
 let problems=[], timer=null, seconds=0, lastFocusedInput=null;
+const doneBtn = document.getElementById("doneBtn");
+const restartBtn = document.getElementById("restartBtn");
+const floatingPanel = document.getElementById("floatingPanel");
+
+doneBtn.disabled = true; // disable until initialization
 
 /* ---------- UTILITY ---------- */
 function shuffle(a){ return [...a].sort(()=>Math.random()-0.5); }
@@ -321,21 +325,12 @@ function checkAnswers(){
   document.getElementById("overlay").style.display="block";
 }
 
-/* ---------- RESTART ---------- */
-function restart(){
-  document.getElementById("overlay").style.display="none";
-  problems=shuffle(unitCircleValues).map(v=>({...v,givenType:Math.random()>.5?"radians":"degrees"}));
-  renderTable();
-  startTimer();
-}
-
 /* ---------- SYMBOL PANEL ---------- */
 function showFloatingPanel(i){
   const r=i.getBoundingClientRect();
-  const fp=document.getElementById("floatingPanel");
-  fp.style.display="block";
-  fp.style.top=(window.scrollY+r.top-fp.offsetHeight-5)+"px";
-  fp.style.left=(window.scrollX+r.left)+"px";
+  floatingPanel.style.display="block";
+  floatingPanel.style.top=(window.scrollY+r.top-floatingPanel.offsetHeight-5)+"px";
+  floatingPanel.style.left=(window.scrollX+r.left)+"px";
 }
 
 document.querySelectorAll(".symbol").forEach(s=>{
@@ -354,12 +349,7 @@ document.getElementById("closePopupBtn").onclick = function() {
   document.getElementById("overlay").style.display="none";
 };
 
-/* ---------- INIT ---------- */
-document.getElementById("doneBtn").onclick=checkAnswers;
-document.getElementById("restartBtn").onclick=restart;
-restart();
-
-/* ---------- DRAW 16-LINE UNIT CIRCLE ---------- */
+/* ---------- DRAW 16-LINE UNIT CIRCLES ---------- */
 function drawCircle(){
   const linesG=document.getElementById("angleLines");
   const pointsG=document.getElementById("anglePoints");
@@ -370,41 +360,33 @@ function drawCircle(){
     const rad=d*Math.PI/180;
     const x=cx+r*Math.cos(rad);
     const y=cy-r*Math.sin(rad);
-    // line
     const l=document.createElementNS("http://www.w3.org/2000/svg","line");
     l.setAttribute("x1",cx); l.setAttribute("y1",cy);
     l.setAttribute("x2",x); l.setAttribute("y2",y);
     l.setAttribute("stroke","#ccc"); l.setAttribute("stroke-width","1");
     linesG.appendChild(l);
-    // point
     const p=document.createElementNS("http://www.w3.org/2000/svg","circle");
     p.setAttribute("cx",x); p.setAttribute("cy",y);
     p.setAttribute("r","3"); p.setAttribute("fill","black");
     pointsG.appendChild(p);
   });
 }
-  function drawMiniCircle() {
+
+function drawMiniCircle() {
   const linesG = document.getElementById("miniAngleLines");
-  linesG.innerHTML = ""; // clear existing lines
-
-  const cx = 150, cy = 150, r = 120; // same coordinate system
+  linesG.innerHTML = "";
+  const cx = 150, cy = 150, r = 120;
   const degrees = [0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330];
-
   degrees.forEach(d => {
     const rad = d * Math.PI / 180;
     const x = cx + r * Math.cos(rad);
     const y = cy - r * Math.sin(rad);
-
     const l = document.createElementNS("http://www.w3.org/2000/svg","line");
-    l.setAttribute("x1", cx);
-    l.setAttribute("y1", cy);
-    l.setAttribute("x2", x);
-    l.setAttribute("y2", y);
+    l.setAttribute("x1", cx); l.setAttribute("y1", cy);
+    l.setAttribute("x2", x); l.setAttribute("y2", y);
     l.setAttribute("stroke", "#ccc");
     l.setAttribute("stroke-width", "1");
     linesG.appendChild(l);
-
-    // optional: small dot at the point
     const p = document.createElementNS("http://www.w3.org/2000/svg","circle");
     p.setAttribute("cx", x);
     p.setAttribute("cy", y);
@@ -413,8 +395,24 @@ function drawCircle(){
     linesG.appendChild(p);
   });
 }
-drawCircle();
-drawMiniCircle();
+
+/* ---------- INIT FUNCTION (first-run safe) ---------- */
+function init() {
+  doneBtn.disabled = true;
+  problems = shuffle(unitCircleValues).map(v=>({...v,givenType:Math.random()>.5?"radians":"degrees"}));
+  renderTable();
+  drawCircle();
+  drawMiniCircle();
+  startTimer();
+  doneBtn.disabled = false;
+}
+
+/* ---------- BUTTON HANDLERS ---------- */
+doneBtn.onclick = () => setTimeout(checkAnswers, 50); // safe check
+restartBtn.onclick = init;
+
+/* ---------- INITIAL CALL ---------- */
+init();
 </script>
 </body>
 </html>
