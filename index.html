@@ -383,7 +383,38 @@ function drawCircle(){
     pointsG.appendChild(p);
   });
 }
+  function drawMiniCircle() {
+  const linesG = document.getElementById("miniAngleLines");
+  linesG.innerHTML = ""; // clear existing lines
+
+  const cx = 150, cy = 150, r = 120; // same coordinate system
+  const degrees = [0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330];
+
+  degrees.forEach(d => {
+    const rad = d * Math.PI / 180;
+    const x = cx + r * Math.cos(rad);
+    const y = cy - r * Math.sin(rad);
+
+    const l = document.createElementNS("http://www.w3.org/2000/svg","line");
+    l.setAttribute("x1", cx);
+    l.setAttribute("y1", cy);
+    l.setAttribute("x2", x);
+    l.setAttribute("y2", y);
+    l.setAttribute("stroke", "#ccc");
+    l.setAttribute("stroke-width", "1");
+    linesG.appendChild(l);
+
+    // optional: small dot at the point
+    const p = document.createElementNS("http://www.w3.org/2000/svg","circle");
+    p.setAttribute("cx", x);
+    p.setAttribute("cy", y);
+    p.setAttribute("r", "2"); 
+    p.setAttribute("fill", "black");
+    linesG.appendChild(p);
+  });
+}
 drawCircle();
+drawMiniCircle();
 </script>
 </body>
 </html>
