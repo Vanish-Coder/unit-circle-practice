@@ -10,7 +10,6 @@
 html, body { height:100%; }
 body { background:#fff; }
 
-/* ---------- TOP PANEL ---------- */
 #topPanel {
   position: fixed;
   top:0; left:0;
@@ -24,27 +23,12 @@ body { background:#fff; }
   z-index:10;
 }
 
-/* ---------- TOP MINI CIRCLE ---------- */
-#topMiniCircle {
-  width: 150px;    
-  height: 150px;
-}
-
+#topMiniCircle { width: 150px; height: 150px; }
 #topTimer { font-size:24px; font-weight:bold; }
 
-.topButtons {
-  display:flex;
-  flex-direction: column;
-  gap:10px;
-}
-.topButtons button {
-  padding:8px 14px;
-  font-weight:bold;
-  cursor:pointer;
-  min-width:90px;
-}
+.topButtons { display:flex; flex-direction: column; gap:10px; }
+.topButtons button { padding:8px 14px; font-weight:bold; cursor:pointer; min-width:90px; }
 
-/* ---------- MAIN CONTENT ---------- */
 #scrollContainer {
   max-width:900px;
   margin:0 auto;
@@ -54,146 +38,66 @@ body { background:#fff; }
 
 h1 { text-align:center; margin-bottom:6px; }
 
-#note {
-  text-align:center;
-  font-size: 0.55em;
-  margin-bottom:14px;
-  color:#444;
-}
+#note { text-align:center; font-size:0.55em; margin-bottom:14px; color:#444; }
 
-.flex-container {
-  display:flex;
-  gap:20px;
-  align-items:flex-start;
-  flex-wrap:wrap;
-  justify-content:center;
-}
-
+.flex-container { display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; justify-content:center; }
 .flex-item { flex:1 1 300px; min-width:280px; display:flex; justify-content:center; }
 
-/* ---------- TABLE ---------- */
 table {
-  width:100%;
-  border-collapse:collapse;
-  border:2px solid #000;
-  margin-bottom:20px;
+  width:100%; border-collapse:collapse; border:2px solid #000; margin-bottom:20px;
 }
-
-th, td {
-  border:1px solid #000;
-  padding:8px;
-  text-align:center;
-}
-
-td input {
-  width:100%;
-  padding:6px;
-  text-align:center;
-  font-size:16px;
-}
-
+th, td { border:1px solid #000; padding:8px; text-align:center; }
+td input { width:100%; padding:6px; text-align:center; font-size:16px; }
 td.given { background:#f0f0f0; font-weight:bold; }
 td.correct { background:#90ee90; }
 td.incorrect { background:#ffb6c6; }
 
-/* ---------- SVG RESPONSIVE ---------- */
-.flex-item svg {
-  width: 200px;    
-  height: 200px;
-  max-width: 100%;
-  display: block;
-  margin: auto;
-}
+.flex-item svg { width:200px; height:200px; max-width:100%; display:block; margin:auto; }
 
-/* ---------- SYMBOL PANEL ---------- */
 #floatingPanel {
-  position:absolute;
-  display:none;
-  background:#fff;
-  border:1px solid #999;
-  box-shadow:0 2px 5px rgba(0,0,0,0.2);
-  padding:5px;
-  border-radius:4px;
-  z-index:9999;
+  position:absolute; display:none; background:#fff; border:1px solid #999;
+  box-shadow:0 2px 5px rgba(0,0,0,0.2); padding:5px; border-radius:4px; z-index:9999;
 }
-.symbol {
-  display:inline-block;
-  font-size:20px;
-  padding:4px 10px;
-  margin:2px;
-  background:#eee;
-  border-radius:3px;
-  cursor:pointer;
-}
+.symbol { display:inline-block; font-size:20px; padding:4px 10px; margin:2px; background:#eee; border-radius:3px; cursor:pointer; }
 
-/* ---------- POPUP ---------- */
-#overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.4);
-  display:none;
-  z-index:10000;
+#overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,0.4); display:none; z-index:10000;
 }
-#popup{
-  background:white;
-  width:300px;
-  padding:20px;
-  border-radius:8px;
-  position:absolute;
-  top:50%; left:50%;
-  transform:translate(-50%,-50%);
-  text-align:center;
+#popup {
+  background:white; width:300px; padding:20px; border-radius:8px;
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center;
 }
-#popup button{
-  margin-top:15px;
-  padding:8px 20px;
-  font-weight:bold;
-  cursor:pointer;
-}
+#popup button { margin-top:15px; padding:8px 20px; font-weight:bold; cursor:pointer; }
 </style>
 </head>
 <body>
 
-<!-- ---------- TOP PANEL ---------- -->
 <div id="topPanel">
   <svg id="topMiniCircle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">
     <circle cx="150" cy="150" r="120" fill="none" stroke="black" stroke-width="2"/>
     <g id="miniAngleLines"></g>
   </svg>
-
   <div id="topTimer">00:00</div>
-
   <div class="topButtons">
     <button id="doneBtn">Done</button>
     <button id="restartBtn">Restart</button>
   </div>
 </div>
 
-<!-- ---------- MAIN ---------- -->
 <div id="scrollContainer">
   <h1>Unit Circle – Solve for All Values</h1>
-  <div id="note">
-    <h1>For undefined values, type in "und."</h1>
-  </div>
+  <div id="note"><h1>For undefined values, type in "und."</h1></div>
 
   <div class="flex-container">
-    <!-- Table -->
     <div class="flex-item">
       <table>
         <thead>
-          <tr>
-            <th>radians</th>
-            <th>degrees</th>
-            <th>sin</th>
-            <th>cos</th>
-            <th>tan</th>
-          </tr>
+          <tr><th>radians</th><th>degrees</th><th>sin</th><th>cos</th><th>tan</th></tr>
         </thead>
         <tbody id="tableBody"></tbody>
       </table>
     </div>
 
-    <!-- Unit Circle -->
     <div class="flex-item">
       <svg id="unitCircleSVG" viewBox="0 0 300 300" style="border:2px solid #000; background:white; border-radius:4px;">
         <circle cx="150" cy="150" r="120" fill="none" stroke="black" stroke-width="2"/>
@@ -204,13 +108,11 @@ td.incorrect { background:#ffb6c6; }
   </div>
 </div>
 
-<!-- ---------- SYMBOL PANEL ---------- -->
 <div id="floatingPanel">
   <div class="symbol" data-symbol="√">√</div>
   <div class="symbol" data-symbol="π">π</div>
 </div>
 
-<!-- ---------- POPUP ---------- -->
 <div id="overlay">
   <div id="popup">
     <h2>Results</h2>
@@ -244,12 +146,23 @@ let problems=[], timer=null, seconds=0, lastFocusedInput=null;
 const doneBtn = document.getElementById("doneBtn");
 const restartBtn = document.getElementById("restartBtn");
 const floatingPanel = document.getElementById("floatingPanel");
+const inputCache = new Map();
 
-doneBtn.disabled = true; // disable until initialization
+doneBtn.disabled = true;
 
-/* ---------- UTILITY ---------- */
 function shuffle(a){ return [...a].sort(()=>Math.random()-0.5); }
-function normalize(s){ return s.toLowerCase().replace(/\s+/g,"").replace(/[()]/g,"").replace(/°/g,"").replace(/undefined/g,"und.").replace(/und$/,"und."); }
+
+// ✅ FIX: always convert input to string first
+function normalize(s){
+  s = String(s);
+  return s.toLowerCase()
+          .replace(/\s+/g,"")
+          .replace(/[()]/g,"")
+          .replace(/°/g,"")
+          .replace(/undefined/g,"und.")
+          .replace(/und$/,"und.");
+}
+
 function alternatives(a){
   const f=[a];
   if(a==="1/√3") f.push("√3/3");
@@ -259,29 +172,30 @@ function alternatives(a){
   if(a==="und.") f.push("und","undefined");
   return f;
 }
+
 function isCorrect(p,c,u){
   if(!u.trim()) return false;
-  const n=normalize(u);
-  if(n===normalize(p[c])) return true;
+  const n = normalize(u);
+  if(n === normalize(p[c])) return true;
   return alternatives(p[c]).map(normalize).includes(n);
 }
 
-/* ---------- TABLE ---------- */
 function renderTable(){
-  const tb=document.getElementById("tableBody");
-  tb.innerHTML="";
-  problems.forEach(p=>{
-    const tr=document.createElement("tr");
-    ["radians","degrees","sin","cos","tan"].forEach(c=>{
-      const td=document.createElement("td");
-      if(p.givenType===c){
-        td.className="given";
-        td.textContent=c==="degrees"?p[c]+"°":p[c];
+  const tb = document.getElementById("tableBody");
+  tb.innerHTML = "";
+  problems.forEach((p, i) => {
+    const tr = document.createElement("tr");
+    ["radians","degrees","sin","cos","tan"].forEach(c => {
+      const td = document.createElement("td");
+      if(p.givenType === c){
+        td.className = "given";
+        td.textContent = c==="degrees"?p[c]+"°":p[c];
       } else {
-        const i=document.createElement("input");
-        i.onfocus=()=>{ lastFocusedInput=i; showFloatingPanel(i); }
-        i.onblur=()=>{ floatingPanel.style.display="none"; };
-        td.appendChild(i);
+        const inputEl = document.createElement("input");
+        inputEl.onfocus = () => { lastFocusedInput = inputEl; showFloatingPanel(inputEl); };
+        inputEl.onblur = () => { floatingPanel.style.display = "none"; };
+        td.appendChild(inputEl);
+        inputCache.set(`${i}-${c}`, inputEl);
       }
       tr.appendChild(td);
     });
@@ -289,7 +203,6 @@ function renderTable(){
   });
 }
 
-/* ---------- TIMER ---------- */
 function startTimer(){
   clearInterval(timer);
   seconds=0;
@@ -302,22 +215,25 @@ function startTimer(){
   },1000);
 }
 
-/* ---------- CHECK ---------- */
 function checkAnswers(){
   document.activeElement.blur();
   clearInterval(timer);
   let correct=0,total=0;
   [...document.querySelectorAll("#tableBody tr")].forEach((tr,i)=>{
     ["radians","degrees","sin","cos","tan"].forEach((c,j)=>{
-      const td=tr.children[j];
+      const td = tr.children[j];
       if(td.classList.contains("given")) return;
       total++;
-      const val=td.querySelector("input").value;
+      const inputEl = inputCache.get(`${i}-${c}`);
+      if(!inputEl) return;
+      const val = inputEl.value.trim();
       td.classList.remove("correct","incorrect");
-      if(isCorrect(problems[i],c,val)){
-        td.classList.add("correct");
-        correct++;
-      } else td.classList.add("incorrect");
+      if(isCorrect(problems[i],c,val)) {
+       td.classList.add("correct");
+      correct++;   // count correct answers
+      } else {
+      td.classList.add("incorrect");
+  }
     });
   });
   document.getElementById("scoreText").textContent=`Score: ${correct} / ${total}`;
@@ -325,7 +241,6 @@ function checkAnswers(){
   document.getElementById("overlay").style.display="block";
 }
 
-/* ---------- SYMBOL PANEL ---------- */
 function showFloatingPanel(i){
   const r=i.getBoundingClientRect();
   floatingPanel.style.display="block";
@@ -337,24 +252,22 @@ document.querySelectorAll(".symbol").forEach(s=>{
   s.onmousedown=e=>{
     e.preventDefault();
     if(!lastFocusedInput) return;
-    const i=lastFocusedInput, p=i.selectionStart;
-    i.value=i.value.slice(0,p)+s.dataset.symbol+i.value.slice(p);
+    const i = lastFocusedInput, p = i.selectionStart;
+    i.value = i.value.slice(0,p)+s.dataset.symbol+i.value.slice(p);
     i.selectionStart=i.selectionEnd=p+1;
     i.focus();
   };
 });
 
-/* ---------- POPUP CLOSE ---------- */
 document.getElementById("closePopupBtn").onclick = function() {
   document.getElementById("overlay").style.display="none";
 };
 
-/* ---------- DRAW 16-LINE UNIT CIRCLES ---------- */
 function drawCircle(){
-  const linesG=document.getElementById("angleLines");
-  const pointsG=document.getElementById("anglePoints");
+  const linesG = document.getElementById("angleLines");
+  const pointsG = document.getElementById("anglePoints");
   linesG.innerHTML=""; pointsG.innerHTML="";
-  const cx=150, cy=150, r=120;
+  const cx=150,cy=150,r=120;
   const degrees=[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330];
   degrees.forEach(d=>{
     const rad=d*Math.PI/180;
@@ -372,32 +285,29 @@ function drawCircle(){
   });
 }
 
-function drawMiniCircle() {
-  const linesG = document.getElementById("miniAngleLines");
-  linesG.innerHTML = "";
-  const cx = 150, cy = 150, r = 120;
-  const degrees = [0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330];
-  degrees.forEach(d => {
-    const rad = d * Math.PI / 180;
-    const x = cx + r * Math.cos(rad);
-    const y = cy - r * Math.sin(rad);
-    const l = document.createElementNS("http://www.w3.org/2000/svg","line");
-    l.setAttribute("x1", cx); l.setAttribute("y1", cy);
-    l.setAttribute("x2", x); l.setAttribute("y2", y);
-    l.setAttribute("stroke", "#ccc");
-    l.setAttribute("stroke-width", "1");
+function drawMiniCircle(){
+  const linesG=document.getElementById("miniAngleLines");
+  linesG.innerHTML="";
+  const cx=150,cy=150,r=120;
+  const degrees=[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330];
+  degrees.forEach(d=>{
+    const rad=d*Math.PI/180;
+    const x=cx+r*Math.cos(rad);
+    const y=cy-r*Math.sin(rad);
+    const l=document.createElementNS("http://www.w3.org/2000/svg","line");
+    l.setAttribute("x1",cx); l.setAttribute("y1",cy);
+    l.setAttribute("x2",x); l.setAttribute("y2",y);
+    l.setAttribute("stroke","#ccc"); l.setAttribute("stroke-width","1");
     linesG.appendChild(l);
-    const p = document.createElementNS("http://www.w3.org/2000/svg","circle");
-    p.setAttribute("cx", x);
-    p.setAttribute("cy", y);
-    p.setAttribute("r", "2"); 
-    p.setAttribute("fill", "black");
+    const p=document.createElementNS("http://www.w3.org/2000/svg","circle");
+    p.setAttribute("cx",x); p.setAttribute("cy",y);
+    p.setAttribute("r","2");
+    p.setAttribute("fill","black");
     linesG.appendChild(p);
   });
 }
 
-/* ---------- INIT FUNCTION (first-run safe) ---------- */
-function init() {
+function init(){
   doneBtn.disabled = true;
   problems = shuffle(unitCircleValues).map(v=>({...v,givenType:Math.random()>.5?"radians":"degrees"}));
   renderTable();
@@ -407,11 +317,12 @@ function init() {
   doneBtn.disabled = false;
 }
 
-/* ---------- BUTTON HANDLERS ---------- */
-doneBtn.onclick = () => setTimeout(checkAnswers, 50); // safe check
+doneBtn.onclick = () => {
+  if(document.activeElement instanceof HTMLInputElement) document.activeElement.blur();
+  setTimeout(checkAnswers, 10);
+};
 restartBtn.onclick = init;
 
-/* ---------- INITIAL CALL ---------- */
 init();
 </script>
 </body>
