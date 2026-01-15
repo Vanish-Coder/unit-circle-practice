@@ -2,66 +2,113 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Unit Circle Practice</title>
 
 <style>
-* { box-sizing:border-box; margin:0; padding:0; font-family:Arial,sans-serif; }
+* { margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif; }
+html, body { height:100%; }
+body { background:#fff; }
 
-body { background:white; }
-
-/* ---------- TOP BAR ---------- */
-#topPanel{
-  position:fixed; top:0; left:0; width:100%; height:180px;
-  background:#f8f8f8; border-bottom:1px solid #aaa;
-  display:flex; justify-content:space-around; align-items:center;
+/* ---------- TOP PANEL ---------- */
+#topPanel {
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:200px;
+  background:#f8f8f8;
+  border-bottom:1px solid #ccc;
+  display:flex;
+  align-items:center;
+  justify-content: space-around;
+  box-shadow:0 1px 2px rgba(0,0,0,0.1);
   z-index:10;
 }
 
-#topTimer{ font-size:26px; font-weight:bold; }
+#topTimer { font-size:24px; font-weight:bold; }
 
-.topButtons{ display:flex; flex-direction:column; gap:10px; }
-.topButtons button{ padding:8px 16px; font-weight:bold; cursor:pointer; }
+.topButtons {
+  display:flex;
+  flex-direction: column;
+  gap:10px;
+}
+.topButtons button {
+  padding:8px 14px;
+  font-weight:bold;
+  cursor:pointer;
+  min-width:90px;
+}
 
-/* ---------- MAIN ---------- */
-#content{ margin-top:200px; max-width:900px; margin-inline:auto; }
-h1{ text-align:center; margin-bottom:12px; }
+/* ---------- MAIN CONTENT ---------- */
+#scrollContainer {
+  max-width:900px;
+  margin:0 auto;
+  margin-top:200px;
+  padding-bottom:200px;
+}
 
-table{
+h1 { text-align:center; margin-bottom:6px; }
+
+#note {
+  text-align:center;
+  font-size: 0.55em;
+  margin-bottom:14px;
+  color:#444;
+}
+
+.flex-container {
+  display:flex;
+  gap:20px;
+  align-items:flex-start;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+
+.flex-item { flex:1 1 300px; min-width:280px; }
+
+/* ---------- TABLE ---------- */
+table {
   width:100%;
   border-collapse:collapse;
-  border:2px solid black;
+  border:2px solid #000;
+  margin-bottom:20px;
 }
-th,td{
-  border:1px solid black;
+
+th, td {
+  border:1px solid #000;
   padding:8px;
   text-align:center;
 }
-td input{
+
+td input {
   width:100%;
   padding:6px;
-  font-size:16px;
   text-align:center;
+  font-size:16px;
 }
 
-td.given{ background:#eee; font-weight:bold; }
-td.correct{ background:#90ee90; }
-td.incorrect{ background:#ffb6c6; }
+td.given { background:#f0f0f0; font-weight:bold; }
+td.correct { background:#90ee90; }
+td.incorrect { background:#ffb6c6; }
 
 /* ---------- SYMBOL PANEL ---------- */
-#floatingPanel{
+#floatingPanel {
   position:absolute;
   display:none;
-  background:white;
-  border:1px solid #888;
-  padding:4px;
+  background:#fff;
+  border:1px solid #999;
+  box-shadow:0 2px 5px rgba(0,0,0,0.2);
+  padding:5px;
   border-radius:4px;
-  z-index:30;
+  z-index:9999;
 }
-.symbol{
-  padding:4px 10px;
-  background:#eee;
-  cursor:pointer;
+.symbol {
   display:inline-block;
+  font-size:20px;
+  padding:4px 10px;
+  margin:2px;
+  background:#eee;
+  border-radius:3px;
+  cursor:pointer;
 }
 
 /* ---------- POPUP ---------- */
@@ -70,24 +117,21 @@ td.incorrect{ background:#ffb6c6; }
   inset:0;
   background:rgba(0,0,0,0.4);
   display:none;
-  z-index:50;
+  z-index:10000;
 }
-
 #popup{
   background:white;
   width:300px;
   padding:20px;
   border-radius:8px;
   position:absolute;
-  top:50%;
-  left:50%;
+  top:50%; left:50%;
   transform:translate(-50%,-50%);
   text-align:center;
 }
-
 #popup button{
-  margin-top:20px;
-  padding:8px 24px;
+  margin-top:15px;
+  padding:8px 20px;
   font-weight:bold;
   cursor:pointer;
 }
@@ -96,31 +140,63 @@ td.incorrect{ background:#ffb6c6; }
 
 <body>
 
+<!-- ---------- TOP BAR ---------- -->
 <div id="topPanel">
+
+  <svg id="topMiniCircle" viewBox="0 0 300 300">
+    <circle cx="150" cy="150" r="120" fill="none" stroke="black" stroke-width="2"/>
+    <line x1="30" y1="150" x2="270" y2="150" stroke="black" stroke-width="2"/>
+    <line x1="150" y1="30" x2="150" y2="270" stroke="black" stroke-width="2"/>
+  </svg>
+
   <div id="topTimer">00:00</div>
+
   <div class="topButtons">
     <button id="doneBtn">Done</button>
     <button id="restartBtn">Restart</button>
   </div>
 </div>
 
-<div id="content">
-  <h1>Unit Circle – Fill Everything Except the Given</h1>
-  <table>
-    <thead>
-      <tr>
-        <th>radians</th><th>degrees</th><th>sin</th><th>cos</th><th>tan</th>
-      </tr>
-    </thead>
-    <tbody id="tableBody"></tbody>
-  </table>
+<!-- ---------- MAIN ---------- -->
+<div id="scrollContainer">
+  <h1>Unit Circle – Solve for All Values</h1>
+  <div id="note">
+    <h1>For undefined values, type in "und."</h1>
+  </div>
+
+  <div class="flex-container">
+    <div class="flex-item">
+      <table>
+        <thead>
+          <tr>
+            <th>radians</th>
+            <th>degrees</th>
+            <th>sin</th>
+            <th>cos</th>
+            <th>tan</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+
+    <div class="flex-item">
+      <svg width="300" height="300" style="border:2px solid #000; background:white; border-radius:4px;">
+        <circle cx="150" cy="150" r="120" fill="none" stroke="black" stroke-width="2"/>
+        <line x1="30" y1="150" x2="270" y2="150" stroke="black" stroke-width="2"/>
+        <line x1="150" y1="30" x2="150" y2="270" stroke="black" stroke-width="2"/>
+      </svg>
+    </div>
+  </div>
 </div>
 
+<!-- ---------- SYMBOL PANEL ---------- -->
 <div id="floatingPanel">
-  <span class="symbol" data-s="√">√</span>
-  <span class="symbol" data-s="π">π</span>
+  <div class="symbol" data-symbol="√">√</div>
+  <div class="symbol" data-symbol="π">π</div>
 </div>
 
+<!-- ---------- POPUP ---------- -->
 <div id="overlay">
   <div id="popup">
     <h2>Results</h2>
@@ -131,127 +207,135 @@ td.incorrect{ background:#ffb6c6; }
 </div>
 
 <script>
-const data=[
- {d:0,r:"0",s:"0",c:"1",t:"0"},
- {d:30,r:"π/6",s:"1/2",c:"√3/2",t:"1/√3"},
- {d:45,r:"π/4",s:"√2/2",c:"√2/2",t:"1"},
- {d:60,r:"π/3",s:"√3/2",c:"1/2",t:"√3"},
- {d:90,r:"π/2",s:"1",c:"0",t:"und."},
- {d:120,r:"2π/3",s:"√3/2",c:"-1/2",t:"-√3"},
- {d:135,r:"3π/4",s:"√2/2",c:"-√2/2",t:"-1"},
- {d:150,r:"5π/6",s:"1/2",c:"-√3/2",t:"-1/√3"},
+const unitCircleValues = [
+ { degrees:0,radians:"0",sin:"0",cos:"1",tan:"0" },
+ { degrees:30,radians:"π/6",sin:"1/2",cos:"√3/2",tan:"1/√3" },
+ { degrees:45,radians:"π/4",sin:"√2/2",cos:"√2/2",tan:"1" },
+ { degrees:60,radians:"π/3",sin:"√3/2",cos:"1/2",tan:"√3" },
+ { degrees:90,radians:"π/2",sin:"1",cos:"0",tan:"und." },
+ { degrees:120,radians:"2π/3",sin:"√3/2",cos:"-1/2",tan:"-√3" },
+ { degrees:135,radians:"3π/4",sin:"√2/2",cos:"-√2/2",tan:"-1" },
+ { degrees:150,radians:"5π/6",sin:"1/2",cos:"-√3/2",tan:"-1/√3" },
+ { degrees:180,radians:"π",sin:"0",cos:"-1",tan:"0" },
+ { degrees:210,radians:"7π/6",sin:"-1/2",cos:"-√3/2",tan:"1/√3" },
+ { degrees:225,radians:"5π/4",sin:"-√2/2",cos:"-√2/2",tan:"1" },
+ { degrees:240,radians:"4π/3",sin:"-√3/2",cos:"-1/2",tan:"√3" },
+ { degrees:270,radians:"3π/2",sin:"-1",cos:"0",tan:"und." },
+ { degrees:300,radians:"5π/3",sin:"-√3/2",cos:"1/2",tan:"-√3" },
+ { degrees:315,radians:"7π/4",sin:"-√2/2",cos:"√2/2",tan:"-1" },
+ { degrees:330,radians:"11π/6",sin:"-1/2",cos:"√3/2",tan:"-1/√3" }
 ];
 
-let problems=[],timer,sec=0,lastInput=null;
+let problems=[], timer=null, seconds=0, lastFocusedInput=null;
 
-/* ---------- TIMER ---------- */
-function startTimer(){
-  clearInterval(timer);
-  sec=0;
-  topTimer.textContent="00:00";
-  timer=setInterval(()=>{
-    sec++;
-    topTimer.textContent=
-      String(Math.floor(sec/60)).padStart(2,"0")+":"+
-      String(sec%60).padStart(2,"0");
-  },1000);
+function shuffle(a){ return [...a].sort(()=>Math.random()-0.5); }
+function normalize(s){ return s.toLowerCase().replace(/\s+/g,"").replace(/[()]/g,"").replace(/°/g,"").replace(/undefined/g,"und.").replace(/und$/,"und."); }
+function alternatives(a){
+  const f=[a];
+  if(a==="1/√3") f.push("√3/3");
+  if(a==="√3/3") f.push("1/√3");
+  if(a==="-1/√3") f.push("-√3/3");
+  if(a==="-√3/3") f.push("-1/√3");
+  if(a==="und.") f.push("und","undefined");
+  return f;
+}
+function isCorrect(p,c,u){
+  if(!u.trim()) return false;
+  const n=normalize(u);
+  if(n===normalize(p[c])) return true;
+  return alternatives(p[c]).map(normalize).includes(n);
 }
 
-/* ---------- HELPERS ---------- */
-const norm=s=>s.toLowerCase().replace(/\s/g,"");
-const alt=v=>{
-  if(v==="1/√3") return ["1/√3","√3/3"];
-  if(v==="-1/√3") return ["-1/√3","-√3/3"];
-  return [v];
-}
-
-/* ---------- BUILD ---------- */
-function build(){
-  tableBody.innerHTML="";
+function renderTable(){
+  const tb=document.getElementById("tableBody");
+  tb.innerHTML="";
   problems.forEach(p=>{
     const tr=document.createElement("tr");
-    ["r","d","s","c","t"].forEach(k=>{
+    ["radians","degrees","sin","cos","tan"].forEach(c=>{
       const td=document.createElement("td");
-      if(p.g===k){
+      if(p.givenType===c){
         td.className="given";
-        td.textContent=k==="d"?p[k]+"°":p[k];
+        td.textContent=c==="degrees"?p[c]+"°":p[c];
       } else {
         const i=document.createElement("input");
-        i.onfocus=()=>{lastInput=i;showPanel(i);};
-        i.onblur=()=>floatingPanel.style.display="none";
+        i.onfocus=()=>{ lastFocusedInput=i; showFloatingPanel(i); }
+        i.onblur=()=>{ floatingPanel.style.display="none"; };
         td.appendChild(i);
       }
       tr.appendChild(td);
     });
-    tableBody.appendChild(tr);
+    tb.appendChild(tr);
   });
 }
 
-/* ---------- CHECK ---------- */
-function check(){
+function startTimer(){
+  clearInterval(timer);
+  seconds=0;
+  document.getElementById("topTimer").textContent="00:00";
+  timer=setInterval(()=>{
+    seconds++;
+    const m=String(Math.floor(seconds/60)).padStart(2,"0");
+    const s=String(seconds%60).padStart(2,"0");
+    document.getElementById("topTimer").textContent=`${m}:${s}`;
+  },1000);
+}
+
+function checkAnswers(){
   document.activeElement.blur();
   clearInterval(timer);
-
-  let score=0,total=0;
-  [...tableBody.rows].forEach((tr,i)=>{
-    ["r","d","s","c","t"].forEach((k,j)=>{
-      const td=tr.cells[j];
+  let correct=0,total=0;
+  [...document.querySelectorAll("#tableBody tr")].forEach((tr,i)=>{
+    ["radians","degrees","sin","cos","tan"].forEach((c,j)=>{
+      const td=tr.children[j];
       if(td.classList.contains("given")) return;
       total++;
-      const val=td.firstChild.value.trim();
+      const val=td.querySelector("input").value;
       td.classList.remove("correct","incorrect");
-      if(val && alt(problems[i][k]).map(norm).includes(norm(val))){
+      if(isCorrect(problems[i],c,val)){
         td.classList.add("correct");
-        score++;
-      } else {
-        td.classList.add("incorrect");
-      }
+        correct++;
+      } else td.classList.add("incorrect");
     });
   });
-
-  scoreText.textContent=`Score: ${score} / ${total}`;
-  percentText.textContent=`Percentage: ${Math.round(score/total*100)}%`;
-  overlay.style.display="block";
+  document.getElementById("scoreText").textContent=`Score: ${correct} / ${total}`;
+  document.getElementById("percentText").textContent=`Percentage: ${Math.round(correct/total*100)}%`;
+  document.getElementById("overlay").style.display="block";
 }
 
-/* ---------- POPUP FIX ---------- */
-closePopupBtn.onclick=()=>{
-  overlay.style.display="none";
-};
-
-/* ---------- SYMBOLS ---------- */
-document.querySelectorAll(".symbol").forEach(s=>{
-  s.onmousedown=e=>{
-    e.preventDefault();
-    if(!lastInput) return;
-    const p=lastInput.selectionStart;
-    lastInput.value=
-      lastInput.value.slice(0,p)+s.dataset.s+
-      lastInput.value.slice(p);
-    lastInput.focus();
-    lastInput.selectionStart=lastInput.selectionEnd=p+1;
-  };
-});
-
-function showPanel(i){
-  const r=i.getBoundingClientRect();
-  floatingPanel.style.display="block";
-  floatingPanel.style.top=(window.scrollY+r.top-35)+"px";
-  floatingPanel.style.left=(window.scrollX+r.left)+"px";
-}
-
-/* ---------- RESET ---------- */
-function reset(){
-  overlay.style.display="none";
-  problems=data.map(v=>({...v,g:Math.random()>.5?"r":"d"}));
-  build();
+function restart(){
+  document.getElementById("overlay").style.display="none";
+  problems=shuffle(unitCircleValues).map(v=>({...v,givenType:Math.random()>.5?"radians":"degrees"}));
+  renderTable();
   startTimer();
 }
 
-/* ---------- INIT ---------- */
-doneBtn.onclick=check;
-restartBtn.onclick=reset;
-reset();
+function showFloatingPanel(i){
+  const r=i.getBoundingClientRect();
+  const fp=document.getElementById("floatingPanel");
+  fp.style.display="block";
+  fp.style.top=(window.scrollY+r.top-fp.offsetHeight-5)+"px";
+  fp.style.left=(window.scrollX+r.left)+"px";
+}
+
+document.querySelectorAll(".symbol").forEach(s=>{
+  s.onmousedown=e=>{
+    e.preventDefault();
+    if(!lastFocusedInput) return;
+    const i=lastFocusedInput, p=i.selectionStart;
+    i.value=i.value.slice(0,p)+s.dataset.symbol+i.value.slice(p);
+    i.selectionStart=i.selectionEnd=p+1;
+    i.focus();
+  };
+});
+
+document.getElementById("closePopupBtn").onclick = function() {
+  document.getElementById("overlay").style.display="none";
+};
+
+document.getElementById("doneBtn").onclick=checkAnswers;
+document.getElementById("restartBtn").onclick=restart;
+
+restart();
 </script>
 
 </body>
