@@ -4,27 +4,35 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Unit Circle Practice</title>
+
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 html, body { height:100%; font-family: Arial, sans-serif; }
 body { background:#fff; }
 
+/* ---------- TOP PANEL ---------- */
 #topPanel {
   position: fixed;
-  top: 0; left:0; width:100%;
+  top: 0; left:0;
+  width:100%;
   z-index: 9998;
   background: #f8f8f8;
-  height: 200px; /* 2.5x bigger than original 80px */
+  height: 200px;
   border-bottom:1px solid #ccc;
   display:flex;
   align-items:center;
-  justify-content: space-around; /* space between mini circle and buttons */
+  justify-content: space-around;
   box-shadow:0 1px 2px rgba(0,0,0,0.1);
 }
 
 #topMiniCircle {
-  height: 100%; /* fills the top bar height */
-  width: auto; /* maintain aspect ratio */
+  height: 100%;
+  width: auto;
+}
+
+#topTimer {
+  font-size: 24px;
+  font-weight: bold;
 }
 
 .topButtons {
@@ -37,19 +45,28 @@ body { background:#fff; }
   padding:8px 14px;
   font-weight:bold;
   cursor:pointer;
-  min-width:70px;
+  min-width:90px;
 }
 
+/* ---------- MAIN CONTENT ---------- */
 #scrollContainer {
   max-width:900px;
   margin:0 auto;
-  margin-top:200px; /* space for new top bar height */
+  margin-top:200px;
   padding-bottom:200px;
-  overflow-y:auto;
 }
 
-h1 { text-align:center; margin-bottom:10px; }
-#timer { text-align:center; font-size:16px; margin-bottom:10px; }
+h1 {
+  text-align:center;
+  margin-bottom:6px;
+}
+
+#note {
+  text-align:center;
+  font-size: 0.55em;
+  margin-bottom:14px;
+  color:#444;
+}
 
 .flex-container {
   display:flex;
@@ -58,18 +75,35 @@ h1 { text-align:center; margin-bottom:10px; }
   flex-wrap:wrap;
   justify-content:center;
 }
+
 .flex-item { flex:1 1 300px; min-width:280px; }
 
-table { width:100%; border-collapse:collapse; border:2px solid #000; margin-bottom:20px; }
-th, td { border:1px solid #000; padding:8px; text-align:center; }
-td input { width:100%; padding:6px; text-align:center; font-size:16px; line-height:1.2; }
+/* ---------- TABLE ---------- */
+table {
+  width:100%;
+  border-collapse:collapse;
+  border:2px solid #000;
+  margin-bottom:20px;
+}
+
+th, td {
+  border:1px solid #000;
+  padding:8px;
+  text-align:center;
+}
+
+td input {
+  width:100%;
+  padding:6px;
+  text-align:center;
+  font-size:16px;
+}
+
 td.given { background:#f0f0f0; font-weight:bold; }
 td.correct { background:#90ee90; }
 td.incorrect { background:#ffb6c6; }
 
-.buttons { display:flex; justify-content:center; gap:20px; margin-top:20px; }
-button { padding:8px 14px; font-weight:bold; cursor:pointer; min-width:70px; }
-
+/* ---------- SYMBOL PANEL ---------- */
 #floatingPanel {
   position:absolute;
   display:none;
@@ -80,6 +114,7 @@ button { padding:8px 14px; font-weight:bold; cursor:pointer; min-width:70px; }
   border-radius:4px;
   z-index:9999;
 }
+
 .symbol {
   display:inline-block;
   font-size:20px;
@@ -90,6 +125,7 @@ button { padding:8px 14px; font-weight:bold; cursor:pointer; min-width:70px; }
   cursor:pointer;
   user-select:none;
 }
+
 .symbol:active { background:#ccc; }
 
 @media (max-width:800px){
@@ -100,10 +136,12 @@ button { padding:8px 14px; font-weight:bold; cursor:pointer; min-width:70px; }
 }
 </style>
 </head>
+
 <body>
 
-<!-- Top bar with mini unit circle and buttons -->
+<!-- ---------- TOP BAR ---------- -->
 <div id="topPanel">
+
   <svg id="topMiniCircle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">
     <circle cx="150" cy="150" r="120" fill="none" stroke="black" stroke-width="2"/>
     <line x1="30" y1="150" x2="270" y2="150" stroke="black" stroke-width="2"/>
@@ -116,15 +154,20 @@ button { padding:8px 14px; font-weight:bold; cursor:pointer; min-width:70px; }
     <g id="miniAnglePoints"></g>
   </svg>
 
+  <div id="topTimer">00:00</div>
+
   <div class="topButtons">
     <button onclick="checkAnswers()">Done</button>
     <button onclick="location.reload()">Restart</button>
   </div>
 </div>
 
+<!-- ---------- MAIN ---------- -->
 <div id="scrollContainer">
   <h1>Unit Circle – Solve for All Values</h1>
-  <div id="timer">Time: <span id="timeDisplay">00:00</span></div>
+  <div id="note">
+    For undefined values, type in "und." in the textbox
+  </div>
 
   <div class="flex-container">
     <div class="flex-item">
@@ -158,160 +201,158 @@ button { padding:8px 14px; font-weight:bold; cursor:pointer; min-width:70px; }
   </div>
 </div>
 
+<!-- ---------- SYMBOL PANEL ---------- -->
 <div id="floatingPanel">
   <div class="symbol" data-symbol="√">√</div>
   <div class="symbol" data-symbol="π">π</div>
 </div>
 
 <script>
-/* ------------------ DATA & UTILS ------------------ */
+/* ---------- DATA ---------- */
 const unitCircleValues = [
-  { degrees:0,radians:"0",sin:"0",cos:"1",tan:"0" },
-  { degrees:30,radians:"π/6",sin:"1/2",cos:"√3/2",tan:"1/√3" },
-  { degrees:45,radians:"π/4",sin:"√2/2",cos:"√2/2",tan:"1" },
-  { degrees:60,radians:"π/3",sin:"√3/2",cos:"1/2",tan:"√3" },
-  { degrees:90,radians:"π/2",sin:"1",cos:"0",tan:"und." },
-  { degrees:120,radians:"2π/3",sin:"√3/2",cos:"-1/2",tan:"-√3" },
-  { degrees:135,radians:"3π/4",sin:"√2/2",cos:"-√2/2",tan:"-1" },
-  { degrees:150,radians:"5π/6",sin:"1/2",cos:"-√3/2",tan:"-1/√3" },
-  { degrees:180,radians:"π",sin:"0",cos:"-1",tan:"0" },
-  { degrees:210,radians:"7π/6",sin:"-1/2",cos:"-√3/2",tan:"1/√3" },
-  { degrees:225,radians:"5π/4",sin:"-√2/2",cos:"-√2/2",tan:"1" },
-  { degrees:240,radians:"4π/3",sin:"-√3/2",cos:"-1/2",tan:"√3" },
-  { degrees:270,radians:"3π/2",sin:"-1",cos:"0",tan:"und." },
-  { degrees:300,radians:"5π/3",sin:"-√3/2",cos:"1/2",tan:"-√3" },
-  { degrees:315,radians:"7π/4",sin:"-√2/2",cos:"√2/2",tan:"-1" },
-  { degrees:330,radians:"11π/6",sin:"-1/2",cos:"√3/2",tan:"-1/√3" }
+ { degrees:0,radians:"0",sin:"0",cos:"1",tan:"0" },
+ { degrees:30,radians:"π/6",sin:"1/2",cos:"√3/2",tan:"1/√3" },
+ { degrees:45,radians:"π/4",sin:"√2/2",cos:"√2/2",tan:"1" },
+ { degrees:60,radians:"π/3",sin:"√3/2",cos:"1/2",tan:"√3" },
+ { degrees:90,radians:"π/2",sin:"1",cos:"0",tan:"und." },
+ { degrees:120,radians:"2π/3",sin:"√3/2",cos:"-1/2",tan:"-√3" },
+ { degrees:135,radians:"3π/4",sin:"√2/2",cos:"-√2/2",tan:"-1" },
+ { degrees:150,radians:"5π/6",sin:"1/2",cos:"-√3/2",tan:"-1/√3" },
+ { degrees:180,radians:"π",sin:"0",cos:"-1",tan:"0" },
+ { degrees:210,radians:"7π/6",sin:"-1/2",cos:"-√3/2",tan:"1/√3" },
+ { degrees:225,radians:"5π/4",sin:"-√2/2",cos:"-√2/2",tan:"1" },
+ { degrees:240,radians:"4π/3",sin:"-√3/2",cos:"-1/2",tan:"√3" },
+ { degrees:270,radians:"3π/2",sin:"-1",cos:"0",tan:"und." },
+ { degrees:300,radians:"5π/3",sin:"-√3/2",cos:"1/2",tan:"-√3" },
+ { degrees:315,radians:"7π/4",sin:"-√2/2",cos:"√2/2",tan:"-1" },
+ { degrees:330,radians:"11π/6",sin:"-1/2",cos:"√3/2",tan:"-1/√3" }
 ];
 
-let problems=[], lastFocusedInput=null, timerInterval, totalSeconds=0;
+let problems=[], timerInterval, totalSeconds=0, lastFocusedInput=null;
 
-function shuffle(array){ const arr=[...array]; for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]];} return arr;}
-function generateProblems(){ const shuffled=shuffle(unitCircleValues); return shuffled.map(row=>{ const givenType=Math.random()>0.5?"radians":"degrees"; return { degrees:row.degrees,radians:row.radians,sin:row.sin,cos:row.cos,tan:row.tan,givenType:givenType,userAnswers:{radians:"",degrees:"",sin:"",cos:"",tan:""} }; });}
-function getAlternativeForms(answer){ const forms=[answer]; if(answer==="1/√3") forms.push("√3/3"); if(answer==="√3/3") forms.push("1/√3"); if(answer==="-1/√3") forms.push("-√3/3"); if(answer==="-√3/3") forms.push("-1/√3"); if(answer==="und.") forms.push("undefined","und"); return forms;}
-function checkAnswer(problem,column,userAnswer){ const correctAnswer=problem[column]; const normalized=userAnswer.trim().replace(/\s/g,"").replace("°",""); const normalizedAnswer=correctAnswer.toString().replace(/\s/g,"").replace("°",""); if(normalized===normalizedAnswer)return true; return getAlternativeForms(normalizedAnswer).includes(normalized);}
-
-/* ------------------ TIMER ------------------ */
-function startTimer(){ 
-  const display=document.getElementById("timeDisplay"); 
+/* ---------- TIMER ---------- */
+function startTimer(){
+  const display=document.getElementById("topTimer");
   timerInterval=setInterval(()=>{
-    totalSeconds++; 
-    const mins=String(Math.floor(totalSeconds/60)).padStart(2,"0"); 
-    const secs=String(totalSeconds%60).padStart(2,"0"); 
-    display.textContent=`${mins}:${secs}`;
+    totalSeconds++;
+    const m=String(Math.floor(totalSeconds/60)).padStart(2,"0");
+    const s=String(totalSeconds%60).padStart(2,"0");
+    display.textContent=`${m}:${s}`;
   },1000);
 }
-function stopTimer(){ clearInterval(timerInterval);}
 
-/* ------------------ TABLE ------------------ */
-function renderTable(){ 
-  const tbody=document.getElementById("tableBody"); 
-  tbody.innerHTML=""; 
+function stopTimer(){ clearInterval(timerInterval); }
+
+/* ---------- LOGIC ---------- */
+function shuffle(a){ return [...a].sort(()=>Math.random()-0.5); }
+
+function generateProblems(){
+  return shuffle(unitCircleValues).map(r=>{
+    const g=Math.random()>0.5?"radians":"degrees";
+    return {...r,givenType:g};
+  });
+}
+
+function getAlternativeForms(a){
+  const f=[a];
+  if(a==="1/√3") f.push("√3/3");
+  if(a==="√3/3") f.push("1/√3");
+  if(a==="-1/√3") f.push("-√3/3");
+  if(a==="-√3/3") f.push("-1/√3");
+  if(a==="und.") f.push("undefined","und");
+  return f;
+}
+
+function checkAnswer(p,c,u){
+  const n=u.trim().replace(/\s|°/g,"");
+  const a=p[c].replace(/\s|°/g,"");
+  return n===a || getAlternativeForms(a).includes(n);
+}
+
+/* ---------- TABLE ---------- */
+function renderTable(){
+  const tb=document.getElementById("tableBody");
+  tb.innerHTML="";
   problems.forEach(p=>{
-    const row=document.createElement("tr");
-    ["radians","degrees","sin","cos","tan"].forEach(col=>{
+    const tr=document.createElement("tr");
+    ["radians","degrees","sin","cos","tan"].forEach(c=>{
       const td=document.createElement("td");
-      if(p.givenType===col){ td.className="given"; td.textContent=col==="degrees"?p[col]+"°":p[col]; }
-      else {
-        const input=document.createElement("input");
-        input.addEventListener("focus",()=>{ lastFocusedInput=input; showFloatingPanel(input); });
-        input.addEventListener("blur",()=>{ hideFloatingPanel(); });
-        td.appendChild(input);
+      if(p.givenType===c){
+        td.className="given";
+        td.textContent=c==="degrees"?p[c]+"°":p[c];
+      } else {
+        const i=document.createElement("input");
+        i.onfocus=()=>{lastFocusedInput=i; showFloatingPanel(i);}
+        i.onblur=hideFloatingPanel;
+        td.appendChild(i);
       }
-      row.appendChild(td);
+      tr.appendChild(td);
     });
-    tbody.appendChild(row);
+    tb.appendChild(tr);
   });
 }
-function checkAnswers(){ 
-  stopTimer(); 
-  problems.forEach((p,i)=>{
-    const cells=document.querySelectorAll("#tableBody tr")[i].children;
-    ["radians","degrees","sin","cos","tan"].forEach((col,j)=>{
-      const cell=cells[j];
-      if(cell.classList.contains("given")) return;
-      const input=cell.querySelector("input");
-      const correct=checkAnswer(p,col,input.value);
-      cell.classList.toggle("correct",correct);
-      cell.classList.toggle("incorrect",!correct);
+
+function checkAnswers(){
+  stopTimer();
+  [...document.querySelectorAll("#tableBody tr")].forEach((tr,i)=>{
+    ["radians","degrees","sin","cos","tan"].forEach((c,j)=>{
+      const td=tr.children[j];
+      if(td.classList.contains("given")) return;
+      const ok=checkAnswer(problems[i],c,td.querySelector("input").value);
+      td.classList.toggle("correct",ok);
+      td.classList.toggle("incorrect",!ok);
     });
   });
 }
 
-/* ------------------ BIG UNIT CIRCLE ------------------ */
-function drawUnitCircle(){ 
-  const points=document.getElementById("anglePoints"); 
-  const lines=document.getElementById("angleLines"); 
-  const cx=150,cy=150,r=120; 
-  const angles=[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330]; 
-  angles.forEach(deg=>{
-    const rad=deg*Math.PI/180; 
-    const x=cx+r*Math.cos(rad); 
-    const y=cy-r*Math.sin(rad); 
-    const line=document.createElementNS("http://www.w3.org/2000/svg","line"); 
-    line.setAttribute("x1",cx); line.setAttribute("y1",cy); line.setAttribute("x2",x); line.setAttribute("y2",y); line.setAttribute("stroke","#ccc"); 
-    lines.appendChild(line); 
-    const pt=document.createElementNS("http://www.w3.org/2000/svg","circle"); 
-    pt.setAttribute("cx",x); pt.setAttribute("cy",y); pt.setAttribute("r",4); pt.setAttribute("fill","black"); 
-    points.appendChild(pt); 
+/* ---------- CIRCLES ---------- */
+function drawCircle(lines,pts,rw){
+  const cx=150,cy=150,r=120;
+  [0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330].forEach(d=>{
+    const rad=d*Math.PI/180;
+    const x=cx+r*Math.cos(rad), y=cy-r*Math.sin(rad);
+    const l=document.createElementNS("http://www.w3.org/2000/svg","line");
+    l.setAttribute("x1",cx);l.setAttribute("y1",cy);
+    l.setAttribute("x2",x);l.setAttribute("y2",y);
+    l.setAttribute("stroke","#ccc");
+    if(rw) l.setAttribute("stroke-width","1");
+    lines.appendChild(l);
+    const p=document.createElementNS("http://www.w3.org/2000/svg","circle");
+    p.setAttribute("cx",x);p.setAttribute("cy",y);
+    p.setAttribute("r",rw?2:4);
+    pts.appendChild(p);
   });
 }
 
-/* ------------------ MINI TOP CIRCLE ------------------ */
-function drawMiniCircle(){
-  const points=document.getElementById("miniAnglePoints"); 
-  const lines=document.getElementById("miniAngleLines"); 
-  const cx=150,cy=150,r=120; 
-  const angles=[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330]; 
-  angles.forEach(deg=>{
-    const rad=deg*Math.PI/180; 
-    const x=cx+r*Math.cos(rad); 
-    const y=cy-r*Math.sin(rad); 
-    const line=document.createElementNS("http://www.w3.org/2000/svg","line"); 
-    line.setAttribute("x1",cx); line.setAttribute("y1",cy); line.setAttribute("x2",x); line.setAttribute("y2",y); 
-    line.setAttribute("stroke","#ccc"); line.setAttribute("stroke-width","1");
-    lines.appendChild(line); 
-    const pt=document.createElementNS("http://www.w3.org/2000/svg","circle"); 
-    pt.setAttribute("cx",x); pt.setAttribute("cy",y); pt.setAttribute("r",2); pt.setAttribute("fill","black"); 
-    points.appendChild(pt); 
-  });
+/* ---------- SYMBOL PANEL ---------- */
+const fp=document.getElementById("floatingPanel");
+function showFloatingPanel(i){
+  const r=i.getBoundingClientRect();
+  fp.style.display="block";
+  fp.style.top=(window.scrollY+r.top-fp.offsetHeight-5)+"px";
+  fp.style.left=(window.scrollX+r.left)+"px";
 }
+function hideFloatingPanel(){ fp.style.display="none"; }
 
-/* ------------------ SYMBOL PANEL ------------------ */
-const floatingPanel=document.getElementById("floatingPanel");
-function showFloatingPanel(input){
-  lastFocusedInput=input;
-  const rect=input.getBoundingClientRect();
-  floatingPanel.style.display="block";
-  floatingPanel.style.top=(window.scrollY+rect.top-floatingPanel.offsetHeight-5)+"px";
-  floatingPanel.style.left=(window.scrollX+rect.left)+"px";
-}
-function hideFloatingPanel(){ floatingPanel.style.display="none"; }
-
-floatingPanel.querySelectorAll(".symbol").forEach(div=>{
-  const insertSymbol=(e)=>{
+fp.querySelectorAll(".symbol").forEach(s=>{
+  s.onmousedown=s.ontouchstart=e=>{
     e.preventDefault();
     if(!lastFocusedInput) return;
-    const sym=div.dataset.symbol;
-    const input=lastFocusedInput;
-    const start=input.selectionStart;
-    const end=input.selectionEnd;
-    const value=input.value;
-    input.value=value.slice(0,start)+sym+value.slice(end);
-    input.selectionStart=input.selectionEnd=start+sym.length;
-    input.focus();
+    const i=lastFocusedInput;
+    const p=i.selectionStart;
+    i.value=i.value.slice(0,p)+s.dataset.symbol+i.value.slice(p);
+    i.selectionStart=i.selectionEnd=p+1;
+    i.focus();
   };
-  div.addEventListener("mousedown", insertSymbol);
-  div.addEventListener("touchstart", insertSymbol);
 });
 
-/* ------------------ INIT ------------------ */
-function init(){ 
-  problems=generateProblems(); 
-  renderTable(); 
-  drawUnitCircle(); 
-  drawMiniCircle();
-  startTimer(); 
+/* ---------- INIT ---------- */
+function init(){
+  problems=generateProblems();
+  renderTable();
+  drawCircle(angleLines,anglePoints,false);
+  drawCircle(miniAngleLines,miniAnglePoints,true);
+  startTimer();
 }
 init();
 </script>
