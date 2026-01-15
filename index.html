@@ -92,11 +92,11 @@ td.incorrect { background:#ffb6c6; }
 
 /* ---------- SVG RESPONSIVE ---------- */
 .flex-item svg {
-  width:100%;
-  max-width:300px;
-  height:auto;
-  display:block;
-  margin:auto;
+  width: 200px;    /* MOBILE-FRIENDLY SIZE */
+  height: 200px;
+  max-width: 100%;
+  display: block;
+  margin: auto;
 }
 
 /* ---------- SYMBOL PANEL ---------- */
@@ -150,7 +150,7 @@ td.incorrect { background:#ffb6c6; }
 
 <!-- ---------- TOP PANEL ---------- -->
 <div id="topPanel">
-  <svg id="topMiniCircle" viewBox="0 0 300 300" style="width:100px; height:100px;">
+  <svg id="topMiniCircle" viewBox="0 0 300 300" style="width:80px; height:80px;">
     <circle cx="150" cy="150" r="120" fill="none" stroke="black" stroke-width="2"/>
     <g id="miniAngleLines"></g>
   </svg>
@@ -377,7 +377,6 @@ function drawCircle(){
   });
 }
 drawCircle();
-
 </script>
 </body>
 </html>
