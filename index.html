@@ -2,162 +2,92 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Unit Circle Practice</title>
 
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-html, body { height:100%; font-family: Arial, sans-serif; }
+* { box-sizing:border-box; margin:0; padding:0; font-family:Arial,sans-serif; }
+
 body { background:#fff; }
 
-/* ---------- TOP PANEL ---------- */
+/* ---------- TOP ---------- */
 #topPanel {
-  position: fixed;
-  top: 0; left:0;
-  width:100%;
-  z-index: 9998;
-  background: #f8f8f8;
-  height: 200px;
-  border-bottom:1px solid #ccc;
-  display:flex;
-  align-items:center;
-  justify-content: space-around;
-  box-shadow:0 1px 2px rgba(0,0,0,0.1);
+  position:fixed; top:0; left:0; width:100%; height:180px;
+  background:#f8f8f8; border-bottom:1px solid #ccc;
+  display:flex; justify-content:space-around; align-items:center;
+  z-index:10;
 }
 
-#topMiniCircle {
-  height: 100%;
-  width: auto;
-}
+#topTimer { font-size:24px; font-weight:bold; }
 
-#topTimer {
-  font-size: 24px;
-  font-weight: bold;
-}
+.topButtons { display:flex; flex-direction:column; gap:10px; }
+.topButtons button { padding:8px 14px; font-weight:bold; cursor:pointer; }
 
-.topButtons {
-  display:flex;
-  flex-direction: column;
-  gap:10px;
-}
+/* ---------- MAIN ---------- */
+#scrollContainer { margin-top:200px; max-width:900px; margin-inline:auto; }
+h1 { text-align:center; margin-bottom:10px; }
 
-.topButtons button {
-  padding:8px 14px;
-  font-weight:bold;
-  cursor:pointer;
-  min-width:90px;
-}
-
-/* ---------- MAIN CONTENT ---------- */
-#scrollContainer {
-  max-width:900px;
-  margin:0 auto;
-  margin-top:200px;
-  padding-bottom:200px;
-}
-
-h1 {
-  text-align:center;
-  margin-bottom:6px;
-}
-
-#note {
-  text-align:center;
-  font-size: 0.55em;
-  margin-bottom:14px;
-  color:#444;
-}
-
-.flex-container {
-  display:flex;
-  gap:20px;
-  align-items:flex-start;
-  flex-wrap:wrap;
-  justify-content:center;
-}
-
-.flex-item { flex:1 1 300px; min-width:280px; }
-
-/* ---------- TABLE ---------- */
 table {
-  width:100%;
-  border-collapse:collapse;
-  border:2px solid #000;
-  margin-bottom:20px;
+  width:100%; border-collapse:collapse; border:2px solid black;
 }
-
-th, td {
-  border:1px solid #000;
-  padding:8px;
-  text-align:center;
-}
+th,td { border:1px solid black; padding:8px; text-align:center; }
 
 td input {
-  width:100%;
-  padding:6px;
-  text-align:center;
-  font-size:16px;
+  width:100%; font-size:16px; padding:6px; text-align:center;
 }
 
-td.given { background:#f0f0f0; font-weight:bold; }
+td.given { background:#eee; font-weight:bold; }
 td.correct { background:#90ee90; }
 td.incorrect { background:#ffb6c6; }
 
 /* ---------- SYMBOL PANEL ---------- */
 #floatingPanel {
-  position:absolute;
-  display:none;
-  background:#fff;
-  border:1px solid #999;
-  box-shadow:0 2px 5px rgba(0,0,0,0.2);
-  padding:5px;
-  border-radius:4px;
-  z-index:9999;
+  position:absolute; display:none;
+  background:white; border:1px solid #999;
+  padding:5px; border-radius:4px;
+  z-index:20;
 }
 
 .symbol {
-  display:inline-block;
-  font-size:20px;
-  padding:4px 10px;
-  margin:2px;
-  background:#eee;
-  border-radius:3px;
-  cursor:pointer;
-  user-select:none;
+  display:inline-block; padding:4px 10px;
+  background:#eee; cursor:pointer;
 }
 
-.symbol:active { background:#ccc; }
+/* ---------- POPUP ---------- */
+#overlay {
+  position:fixed; inset:0;
+  background:rgba(0,0,0,0.4);
+  display:none; z-index:50;
+}
 
-@media (max-width:800px){
-  table th, table td { font-size:14px; padding:6px; }
-  svg { width:90%; height:auto; }
-  .symbol { font-size:24px; padding:6px 12px; }
-  .topButtons button { font-size:14px; padding:6px 10px; }
+#popup {
+  background:white;
+  width:300px;
+  padding:20px;
+  border-radius:8px;
+  position:absolute;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  text-align:center;
+}
+
+#popup h2 { margin-bottom:10px; }
+#popup button {
+  margin-top:15px;
+  padding:8px 20px;
+  font-weight:bold;
+  cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<!-- ---------- TOP BAR ---------- -->
+<!-- ---------- TOP ---------- -->
 <div id="topPanel">
-
-  <svg id="topMiniCircle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">
-    <circle cx="150" cy="150" r="120" fill="none" stroke="black" stroke-width="2"/>
-    <line x1="30" y1="150" x2="270" y2="150" stroke="black" stroke-width="2"/>
-    <line x1="150" y1="30" x2="150" y2="270" stroke="black" stroke-width="2"/>
-    <text x="265" y="145" font-size="12" font-weight="bold">1</text>
-    <text x="140" y="25" font-size="12" font-weight="bold">1</text>
-    <text x="35" y="155" font-size="12" font-weight="bold">-1</text>
-    <text x="145" y="290" font-size="12" font-weight="bold">-1</text>
-    <g id="miniAngleLines"></g>
-    <g id="miniAnglePoints"></g>
-  </svg>
-
   <div id="topTimer">00:00</div>
-
   <div class="topButtons">
-    <button onclick="checkAnswers()">Done</button>
+    <button id="doneBtn">Done</button>
     <button onclick="location.reload()">Restart</button>
   </div>
 </div>
@@ -165,40 +95,15 @@ td.incorrect { background:#ffb6c6; }
 <!-- ---------- MAIN ---------- -->
 <div id="scrollContainer">
   <h1>Unit Circle – Solve for All Values</h1>
-  <div id="note">
-    <h1>For undefined values, type in "und." in the textbox</h1>
-  </div>
 
-  <div class="flex-container">
-    <div class="flex-item">
-      <table>
-        <thead>
-          <tr>
-            <th>radians</th>
-            <th>degrees</th>
-            <th>sin</th>
-            <th>cos</th>
-            <th>tan</th>
-          </tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-      </table>
-    </div>
-
-    <div class="flex-item">
-      <svg width="300" height="300" style="border:2px solid #000; background:white; border-radius:4px;">
-        <circle cx="150" cy="150" r="120" fill="none" stroke="black" stroke-width="2"/>
-        <line x1="30" y1="150" x2="270" y2="150" stroke="black" stroke-width="2"/>
-        <line x1="150" y1="30" x2="150" y2="270" stroke="black" stroke-width="2"/>
-        <text x="265" y="145" font-size="12" font-weight="bold">1</text>
-        <text x="140" y="25" font-size="12" font-weight="bold">1</text>
-        <text x="35" y="155" font-size="12" font-weight="bold">-1</text>
-        <text x="150" y="280" font-size="12" font-weight="bold">-1</text>
-        <g id="angleLines"></g>
-        <g id="anglePoints"></g>
-      </svg>
-    </div>
-  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>radians</th><th>degrees</th><th>sin</th><th>cos</th><th>tan</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
 </div>
 
 <!-- ---------- SYMBOL PANEL ---------- -->
@@ -207,8 +112,17 @@ td.incorrect { background:#ffb6c6; }
   <div class="symbol" data-symbol="π">π</div>
 </div>
 
+<!-- ---------- POPUP ---------- -->
+<div id="overlay">
+  <div id="popup">
+    <h2>Results</h2>
+    <p id="scoreText"></p>
+    <p id="percentText"></p>
+    <button onclick="closePopup()">Close</button>
+  </div>
+</div>
+
 <script>
-/* ---------- DATA ---------- */
 const unitCircleValues = [
  { degrees:0,radians:"0",sin:"0",cos:"1",tan:"0" },
  { degrees:30,radians:"π/6",sin:"1/2",cos:"√3/2",tan:"1/√3" },
@@ -228,51 +142,48 @@ const unitCircleValues = [
  { degrees:330,radians:"11π/6",sin:"-1/2",cos:"√3/2",tan:"-1/√3" }
 ];
 
-let problems=[], timerInterval, totalSeconds=0, lastFocusedInput=null;
+let problems=[], seconds=0, timer, lastFocusedInput=null;
 
 /* ---------- TIMER ---------- */
-function startTimer(){
-  const display=document.getElementById("topTimer");
-  timerInterval=setInterval(()=>{
-    totalSeconds++;
-    const m=String(Math.floor(totalSeconds/60)).padStart(2,"0");
-    const s=String(totalSeconds%60).padStart(2,"0");
-    display.textContent=`${m}:${s}`;
-  },1000);
-}
+timer=setInterval(()=>{
+  seconds++;
+  topTimer.textContent=
+    String(Math.floor(seconds/60)).padStart(2,"0")+":"+
+    String(seconds%60).padStart(2,"0");
+},1000);
 
-function stopTimer(){ clearInterval(timerInterval); }
-
-/* ---------- LOGIC ---------- */
+/* ---------- HELPERS ---------- */
 function shuffle(a){ return [...a].sort(()=>Math.random()-0.5); }
 
-function generateProblems(){
-  return shuffle(unitCircleValues).map(r=>{
-    const g=Math.random()>0.5?"radians":"degrees";
-    return {...r,givenType:g};
-  });
+function normalize(s){
+  return s.toLowerCase()
+    .replace(/\s+/g,"")
+    .replace(/[()]/g,"")
+    .replace(/°/g,"")
+    .replace(/undefined/g,"und.")
+    .replace(/und$/,"und.");
 }
 
-function getAlternativeForms(a){
+function alt(a){
   const f=[a];
   if(a==="1/√3") f.push("√3/3");
   if(a==="√3/3") f.push("1/√3");
   if(a==="-1/√3") f.push("-√3/3");
   if(a==="-√3/3") f.push("-1/√3");
-  if(a==="und.") f.push("undefined","und");
+  if(a==="und.") f.push("und","undefined");
   return f;
 }
 
-function checkAnswer(p,c,u){
-  const n=u.trim().replace(/\s|°/g,"");
-  const a=p[c].replace(/\s|°/g,"");
-  return n===a || getAlternativeForms(a).includes(n);
+function correct(p,c,u){
+  if(!u.trim()) return false;
+  const n=normalize(u);
+  if(n===normalize(p[c])) return true;
+  return alt(p[c]).map(normalize).includes(n);
 }
 
 /* ---------- TABLE ---------- */
-function renderTable(){
-  const tb=document.getElementById("tableBody");
-  tb.innerHTML="";
+function render(){
+  tableBody.innerHTML="";
   problems.forEach(p=>{
     const tr=document.createElement("tr");
     ["radians","degrees","sin","cos","tan"].forEach(c=>{
@@ -282,64 +193,66 @@ function renderTable(){
         td.textContent=c==="degrees"?p[c]+"°":p[c];
       } else {
         const i=document.createElement("input");
-        i.onfocus=()=>{lastFocusedInput=i; showFloatingPanel(i);}
-        i.onblur=hideFloatingPanel;
+        i.onfocus=()=>{lastFocusedInput=i; showPanel(i);};
+        i.onblur=hidePanel;
         td.appendChild(i);
       }
       tr.appendChild(td);
     });
-    tb.appendChild(tr);
+    tableBody.appendChild(tr);
   });
 }
 
+/* ---------- CHECK ---------- */
 function checkAnswers(){
-  stopTimer();
-  [...document.querySelectorAll("#tableBody tr")].forEach((tr,i)=>{
+  document.activeElement.blur();
+  clearInterval(timer);
+
+  let correctCount=0, total=0;
+
+  [...tableBody.rows].forEach((tr,i)=>{
     ["radians","degrees","sin","cos","tan"].forEach((c,j)=>{
-      const td=tr.children[j];
+      const td=tr.cells[j];
       if(td.classList.contains("given")) return;
-      const ok=checkAnswer(problems[i],c,td.querySelector("input").value);
-      td.classList.toggle("correct",ok);
-      td.classList.toggle("incorrect",!ok);
+      total++;
+      td.classList.remove("correct","incorrect");
+      if(correct(problems[i],c,td.firstChild.value)){
+        td.classList.add("correct");
+        correctCount++;
+      } else {
+        td.classList.add("incorrect");
+      }
     });
   });
+
+  showPopup(correctCount,total);
 }
 
-/* ---------- CIRCLES ---------- */
-function drawCircle(lines,pts,rw){
-  const cx=150,cy=150,r=120;
-  [0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330].forEach(d=>{
-    const rad=d*Math.PI/180;
-    const x=cx+r*Math.cos(rad), y=cy-r*Math.sin(rad);
-    const l=document.createElementNS("http://www.w3.org/2000/svg","line");
-    l.setAttribute("x1",cx);l.setAttribute("y1",cy);
-    l.setAttribute("x2",x);l.setAttribute("y2",y);
-    l.setAttribute("stroke","#ccc");
-    if(rw) l.setAttribute("stroke-width","1");
-    lines.appendChild(l);
-    const p=document.createElementNS("http://www.w3.org/2000/svg","circle");
-    p.setAttribute("cx",x);p.setAttribute("cy",y);
-    p.setAttribute("r",rw?2:4);
-    pts.appendChild(p);
-  });
+/* ---------- POPUP ---------- */
+function showPopup(score,total){
+  scoreText.textContent=`Score: ${score} / ${total}`;
+  percentText.textContent=`Percentage: ${Math.round(score/total*100)}%`;
+  overlay.style.display="block";
+}
+
+function closePopup(){
+  overlay.style.display="none";
 }
 
 /* ---------- SYMBOL PANEL ---------- */
-const fp=document.getElementById("floatingPanel");
-function showFloatingPanel(i){
+function showPanel(i){
   const r=i.getBoundingClientRect();
-  fp.style.display="block";
-  fp.style.top=(window.scrollY+r.top-fp.offsetHeight-5)+"px";
-  fp.style.left=(window.scrollX+r.left)+"px";
+  floatingPanel.style.display="block";
+  floatingPanel.style.top=(window.scrollY+r.top-floatingPanel.offsetHeight-5)+"px";
+  floatingPanel.style.left=(window.scrollX+r.left)+"px";
 }
-function hideFloatingPanel(){ fp.style.display="none"; }
+function hidePanel(){ floatingPanel.style.display="none"; }
 
-fp.querySelectorAll(".symbol").forEach(s=>{
-  s.onmousedown=s.ontouchstart=e=>{
+floatingPanel.querySelectorAll(".symbol").forEach(s=>{
+  s.onmousedown=e=>{
     e.preventDefault();
     if(!lastFocusedInput) return;
-    const i=lastFocusedInput;
-    const p=i.selectionStart;
+    const i=lastFocusedInput, p=i.selectionStart;
     i.value=i.value.slice(0,p)+s.dataset.symbol+i.value.slice(p);
     i.selectionStart=i.selectionEnd=p+1;
     i.focus();
@@ -347,14 +260,12 @@ fp.querySelectorAll(".symbol").forEach(s=>{
 });
 
 /* ---------- INIT ---------- */
-function init(){
-  problems=generateProblems();
-  renderTable();
-  drawCircle(angleLines,anglePoints,false);
-  drawCircle(miniAngleLines,miniAnglePoints,true);
-  startTimer();
-}
-init();
+problems=shuffle(unitCircleValues).map(v=>{
+  return {...v, givenType: Math.random()>.5?"radians":"degrees"};
+});
+render();
+doneBtn.onclick=checkAnswers;
 </script>
+
 </body>
 </html>
