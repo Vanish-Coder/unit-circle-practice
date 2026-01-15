@@ -2,30 +2,35 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Unit Circle Practice</title>
 
 <style>
-* { margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif; }
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; font-family: Arial, sans-serif; }
 body { background:#fff; }
 
 /* ---------- TOP PANEL ---------- */
 #topPanel {
-  position:fixed; top:0; left:0;
-  width:100%; height:200px;
-  background:#f8f8f8;
+  position: fixed;
+  top: 0; left:0;
+  width:100%;
+  z-index: 9998;
+  background: #f8f8f8;
+  height: 200px;
   border-bottom:1px solid #ccc;
   display:flex;
   align-items:center;
-  justify-content:space-around;
-  z-index:1000;
+  justify-content: space-around;
+  box-shadow:0 1px 2px rgba(0,0,0,0.1);
 }
 
-#topTimer { font-size:24px; font-weight:bold; }
+#topMiniCircle { height: 100%; width: auto; }
+#topTimer { font-size: 24px; font-weight: bold; }
 
 .topButtons {
   display:flex;
-  flex-direction:column;
+  flex-direction: column;
   gap:10px;
 }
 
@@ -33,33 +38,46 @@ body { background:#fff; }
   padding:8px 14px;
   font-weight:bold;
   cursor:pointer;
+  min-width:90px;
 }
 
-/* ---------- MAIN ---------- */
+/* ---------- MAIN CONTENT ---------- */
 #scrollContainer {
   max-width:900px;
-  margin:200px auto 0;
+  margin:0 auto;
+  margin-top:200px;
   padding-bottom:200px;
 }
 
-h1 { text-align:center; margin-bottom:10px; }
+h1 { text-align:center; margin-bottom:6px; }
+
+#note {
+  text-align:center;
+  font-size: 0.55em;
+  margin-bottom:14px;
+  color:#444;
+}
 
 .flex-container {
   display:flex;
   gap:20px;
+  align-items:flex-start;
   flex-wrap:wrap;
   justify-content:center;
 }
+
+.flex-item { flex:1 1 300px; min-width:280px; }
 
 /* ---------- TABLE ---------- */
 table {
   width:100%;
   border-collapse:collapse;
-  border:2px solid black;
+  border:2px solid #000;
+  margin-bottom:20px;
 }
 
 th, td {
-  border:1px solid black;
+  border:1px solid #000;
   padding:8px;
   text-align:center;
 }
@@ -67,11 +85,11 @@ th, td {
 td input {
   width:100%;
   padding:6px;
-  font-size:16px;
   text-align:center;
+  font-size:16px;
 }
 
-td.given { background:#eee; font-weight:bold; }
+td.given { background:#f0f0f0; font-weight:bold; }
 td.correct { background:#90ee90; }
 td.incorrect { background:#ffb6c6; }
 
@@ -79,17 +97,21 @@ td.incorrect { background:#ffb6c6; }
 #floatingPanel {
   position:absolute;
   display:none;
-  background:white;
+  background:#fff;
   border:1px solid #999;
+  box-shadow:0 2px 5px rgba(0,0,0,0.2);
   padding:5px;
   border-radius:4px;
-  z-index:2000;
+  z-index:9999;
 }
 
 .symbol {
   display:inline-block;
+  font-size:20px;
   padding:4px 10px;
+  margin:2px;
   background:#eee;
+  border-radius:3px;
   cursor:pointer;
 }
 
@@ -97,9 +119,9 @@ td.incorrect { background:#ffb6c6; }
 #overlay {
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.4);
+  background:rgba(0,0,0,0.4);
   display:none;
-  z-index:3000;
+  z-index:10000;
 }
 
 #popup {
@@ -124,9 +146,10 @@ td.incorrect { background:#ffb6c6; }
 
 <body>
 
-<!-- ---------- TOP ---------- -->
+<!-- ---------- TOP BAR ---------- -->
 <div id="topPanel">
-  <svg width="150" height="150" viewBox="0 0 300 300">
+
+  <svg id="topMiniCircle" viewBox="0 0 300 300">
     <circle cx="150" cy="150" r="120" fill="none" stroke="black" stroke-width="2"/>
     <line x1="30" y1="150" x2="270" y2="150" stroke="black" stroke-width="2"/>
     <line x1="150" y1="30" x2="150" y2="270" stroke="black" stroke-width="2"/>
@@ -143,16 +166,33 @@ td.incorrect { background:#ffb6c6; }
 <!-- ---------- MAIN ---------- -->
 <div id="scrollContainer">
   <h1>Unit Circle – Solve for All Values</h1>
+  <div id="note">
+    <h1>For undefined values, type in "und."</h1>
+  </div>
 
   <div class="flex-container">
-    <table>
-      <thead>
-        <tr>
-          <th>radians</th><th>degrees</th><th>sin</th><th>cos</th><th>tan</th>
-        </tr>
-      </thead>
-      <tbody id="tableBody"></tbody>
-    </table>
+    <div class="flex-item">
+      <table>
+        <thead>
+          <tr>
+            <th>radians</th>
+            <th>degrees</th>
+            <th>sin</th>
+            <th>cos</th>
+            <th>tan</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+
+    <div class="flex-item">
+      <svg width="300" height="300" style="border:2px solid #000; background:white; border-radius:4px;">
+        <circle cx="150" cy="150" r="120" fill="none" stroke="black" stroke-width="2"/>
+        <line x1="30" y1="150" x2="270" y2="150" stroke="black" stroke-width="2"/>
+        <line x1="150" y1="30" x2="150" y2="270" stroke="black" stroke-width="2"/>
+      </svg>
+    </div>
   </div>
 </div>
 
@@ -173,7 +213,6 @@ td.incorrect { background:#ffb6c6; }
 </div>
 
 <script>
-/* ---------- DATA ---------- */
 const unitCircleValues = [
  { degrees:0,radians:"0",sin:"0",cos:"1",tan:"0" },
  { degrees:30,radians:"π/6",sin:"1/2",cos:"√3/2",tan:"1/√3" },
@@ -193,21 +232,17 @@ const unitCircleValues = [
  { degrees:330,radians:"11π/6",sin:"-1/2",cos:"√3/2",tan:"-1/√3" }
 ];
 
-let problems=[], timer=null, seconds=0, lastFocusedInput=null;
+let problems=[], timer, seconds=0, lastFocusedInput=null;
 
 /* ---------- HELPERS ---------- */
 function shuffle(a){ return [...a].sort(()=>Math.random()-0.5); }
 
 function normalize(s){
-  return s.toLowerCase()
-    .replace(/\s+/g,"")
-    .replace(/[()]/g,"")
-    .replace(/°/g,"")
-    .replace(/undefined/g,"und.")
-    .replace(/und$/,"und.");
+  return s.toLowerCase().replace(/\s+/g,"").replace(/[()]/g,"")
+    .replace(/°/g,"").replace(/undefined/g,"und.").replace(/und$/,"und.");
 }
 
-function alternatives(a){
+function alts(a){
   const f=[a];
   if(a==="1/√3") f.push("√3/3");
   if(a==="√3/3") f.push("1/√3");
@@ -221,7 +256,7 @@ function isCorrect(p,c,u){
   if(!u.trim()) return false;
   const n=normalize(u);
   if(n===normalize(p[c])) return true;
-  return alternatives(p[c]).map(normalize).includes(n);
+  return alts(p[c]).map(normalize).includes(n);
 }
 
 /* ---------- TABLE ---------- */
@@ -264,8 +299,7 @@ function checkAnswers(){
   document.activeElement.blur();
   clearInterval(timer);
 
-  let correct=0, total=0;
-
+  let correct=0,total=0;
   [...tableBody.rows].forEach((tr,i)=>{
     ["radians","degrees","sin","cos","tan"].forEach((c,j)=>{
       const td=tr.cells[j];
@@ -306,18 +340,19 @@ floatingPanel.querySelectorAll(".symbol").forEach(s=>{
   s.onmousedown=e=>{
     e.preventDefault();
     if(!lastFocusedInput) return;
-    const i=lastFocusedInput, p=i.selectionStart;
+    const i=lastFocusedInput,p=i.selectionStart;
     i.value=i.value.slice(0,p)+s.dataset.symbol+i.value.slice(p);
     i.selectionStart=i.selectionEnd=p+1;
     i.focus();
   };
 });
 
+function closePopup(){ overlay.style.display="none"; }
+
 /* ---------- INIT ---------- */
 restart();
 doneBtn.onclick=checkAnswers;
 restartBtn.onclick=restart;
 </script>
-
 </body>
 </html>
