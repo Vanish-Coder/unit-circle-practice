@@ -63,7 +63,7 @@ h1 { text-align:center; margin-bottom:6px; }
   justify-content:center;
 }
 
-.flex-item { flex:1 1 300px; min-width:280px; }
+.flex-item { flex:1 1 300px; min-width:280px; display:flex; justify-content:center; }
 
 /* ---------- TABLE ---------- */
 table {
@@ -89,6 +89,15 @@ td input {
 td.given { background:#f0f0f0; font-weight:bold; }
 td.correct { background:#90ee90; }
 td.incorrect { background:#ffb6c6; }
+
+/* ---------- SVG RESPONSIVE ---------- */
+.flex-item svg {
+  width:100%;
+  max-width:300px;
+  height:auto;
+  display:block;
+  margin:auto;
+}
 
 /* ---------- SYMBOL PANEL ---------- */
 #floatingPanel {
@@ -137,16 +146,13 @@ td.incorrect { background:#ffb6c6; }
 }
 </style>
 </head>
-
 <body>
 
-<!-- ---------- TOP BAR ---------- -->
+<!-- ---------- TOP PANEL ---------- -->
 <div id="topPanel">
-
-  <svg id="topMiniCircle" viewBox="0 0 300 300">
+  <svg id="topMiniCircle" viewBox="0 0 300 300" style="width:100px; height:100px;">
     <circle cx="150" cy="150" r="120" fill="none" stroke="black" stroke-width="2"/>
-    <line x1="30" y1="150" x2="270" y2="150" stroke="black" stroke-width="2"/>
-    <line x1="150" y1="30" x2="150" y2="270" stroke="black" stroke-width="2"/>
+    <g id="miniAngleLines"></g>
   </svg>
 
   <div id="topTimer">00:00</div>
@@ -165,6 +171,7 @@ td.incorrect { background:#ffb6c6; }
   </div>
 
   <div class="flex-container">
+    <!-- Table -->
     <div class="flex-item">
       <table>
         <thead>
@@ -180,11 +187,12 @@ td.incorrect { background:#ffb6c6; }
       </table>
     </div>
 
+    <!-- Unit Circle -->
     <div class="flex-item">
-      <svg width="300" height="300" style="border:2px solid #000; background:white; border-radius:4px;">
+      <svg id="unitCircleSVG" viewBox="0 0 300 300" style="border:2px solid #000; background:white; border-radius:4px;">
         <circle cx="150" cy="150" r="120" fill="none" stroke="black" stroke-width="2"/>
-        <line x1="30" y1="150" x2="270" y2="150" stroke="black" stroke-width="2"/>
-        <line x1="150" y1="30" x2="150" y2="270" stroke="black" stroke-width="2"/>
+        <g id="angleLines"></g>
+        <g id="anglePoints"></g>
       </svg>
     </div>
   </div>
@@ -228,6 +236,7 @@ const unitCircleValues = [
 
 let problems=[], timer=null, seconds=0, lastFocusedInput=null;
 
+/* ---------- UTILITY ---------- */
 function shuffle(a){ return [...a].sort(()=>Math.random()-0.5); }
 function normalize(s){ return s.toLowerCase().replace(/\s+/g,"").replace(/[()]/g,"").replace(/°/g,"").replace(/undefined/g,"und.").replace(/und$/,"und."); }
 function alternatives(a){
@@ -246,6 +255,7 @@ function isCorrect(p,c,u){
   return alternatives(p[c]).map(normalize).includes(n);
 }
 
+/* ---------- TABLE ---------- */
 function renderTable(){
   const tb=document.getElementById("tableBody");
   tb.innerHTML="";
@@ -268,6 +278,7 @@ function renderTable(){
   });
 }
 
+/* ---------- TIMER ---------- */
 function startTimer(){
   clearInterval(timer);
   seconds=0;
@@ -280,6 +291,7 @@ function startTimer(){
   },1000);
 }
 
+/* ---------- CHECK ---------- */
 function checkAnswers(){
   document.activeElement.blur();
   clearInterval(timer);
@@ -302,6 +314,7 @@ function checkAnswers(){
   document.getElementById("overlay").style.display="block";
 }
 
+/* ---------- RESTART ---------- */
 function restart(){
   document.getElementById("overlay").style.display="none";
   problems=shuffle(unitCircleValues).map(v=>({...v,givenType:Math.random()>.5?"radians":"degrees"}));
@@ -309,6 +322,7 @@ function restart(){
   startTimer();
 }
 
+/* ---------- SYMBOL PANEL ---------- */
 function showFloatingPanel(i){
   const r=i.getBoundingClientRect();
   const fp=document.getElementById("floatingPanel");
@@ -328,15 +342,42 @@ document.querySelectorAll(".symbol").forEach(s=>{
   };
 });
 
+/* ---------- POPUP CLOSE ---------- */
 document.getElementById("closePopupBtn").onclick = function() {
   document.getElementById("overlay").style.display="none";
 };
 
+/* ---------- INIT ---------- */
 document.getElementById("doneBtn").onclick=checkAnswers;
 document.getElementById("restartBtn").onclick=restart;
-
 restart();
-</script>
 
+/* ---------- DRAW 16-LINE UNIT CIRCLE ---------- */
+function drawCircle(){
+  const linesG=document.getElementById("angleLines");
+  const pointsG=document.getElementById("anglePoints");
+  linesG.innerHTML=""; pointsG.innerHTML="";
+  const cx=150, cy=150, r=120;
+  const degrees=[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330];
+  degrees.forEach(d=>{
+    const rad=d*Math.PI/180;
+    const x=cx+r*Math.cos(rad);
+    const y=cy-r*Math.sin(rad);
+    // line
+    const l=document.createElementNS("http://www.w3.org/2000/svg","line");
+    l.setAttribute("x1",cx); l.setAttribute("y1",cy);
+    l.setAttribute("x2",x); l.setAttribute("y2",y);
+    l.setAttribute("stroke","#ccc"); l.setAttribute("stroke-width","1");
+    linesG.appendChild(l);
+    // point
+    const p=document.createElementNS("http://www.w3.org/2000/svg","circle");
+    p.setAttribute("cx",x); p.setAttribute("cy",y);
+    p.setAttribute("r","3"); p.setAttribute("fill","black");
+    pointsG.appendChild(p);
+  });
+}
+drawCircle();
+
+</script>
 </body>
 </html>
