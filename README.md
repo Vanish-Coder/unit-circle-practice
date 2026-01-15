@@ -1,5 +1,14 @@
 # Unit Circle Practice
 
+# How it Looks:
+
+## Desktop/Laptop/Big Screen Mobile Devices:
+<img width="2559" height="1226" alt="Screenshot 2026-01-14 at 4 45 57 PM" src="https://github.com/user-attachments/assets/966de92f-ad91-4010-b0a0-c487af3464a7" />
+
+## Small Screen Mobile Devices (Phones and Smaller Tablets):
+<img width="585" height="1266" alt="Screenshot 2026-01-14 at 4 48 12 PM" src="https://github.com/user-attachments/assets/9eb6af51-1efa-49eb-91b8-51c87bb61f98" />
+
+
 ## Site Link (also in description): https://vanish-coder.github.io/unit-circle-practice/
 
 ## QR Code for Site:
