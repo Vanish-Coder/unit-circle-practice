@@ -2,7 +2,7 @@
 
 # KNOWN BUG: If you spam restart, the answer checking feature doesn't work properly. Just don't spam restart, I probably won't be fixing a niche bug like this. 
 
-# How it Looks:
+# How it Looks (mildly inaccurate now, but still good reference):
 
 # Desktop/Laptop/Big Screen Mobile Devices:
 <img width="2559" height="1226" alt="Screenshot 2026-01-14 at 4 45 57 PM" src="https://github.com/user-attachments/assets/966de92f-ad91-4010-b0a0-c487af3464a7" />
