@@ -9,16 +9,16 @@
 <img width="585" height="1266" alt="Screenshot 2026-01-14 at 4 48 12 PM" src="https://github.com/user-attachments/assets/9eb6af51-1efa-49eb-91b8-51c87bb61f98" />
 _________________________________________________________________________________________
 
-## Site Link (also in description): https://vanish-coder.github.io/unit-circle-practice/
+# Site Link (also in description): https://vanish-coder.github.io/unit-circle-practice/
 
-## QR Code for Site:
+# QR Code for Site:
 <img width="250" height="250" alt="qrcode_vanish-coder github io" src="https://github.com/user-attachments/assets/24281cbc-beb6-4ada-b703-b694a835776b" />
 
 # Instructions/Other Notes (Some of These Are on Site):
 
-### This is a practice site for unit circle values and trig values.
+## This is a practice site for unit circle values and trig values.
 
-### Press restart to rerun your numbers (and restart the timer) and press done to check your work.
+## Press restart to rerun your numbers (and restart the timer) and press done to check your work.
 
-### Press on the special symbols (square root and pi for this site) to type them in the focused text box.
+## Press on the special symbols (square root and pi for this site) to type them in the focused text box.
 
