@@ -1,7 +1,5 @@
 # Unit Circle Practice
 
-# KNOWN BUG: If you spam restart, the answer checking feature doesn't work properly. Just don't spam restart, I probably won't be fixing a niche bug like this. 
-
 # How it Looks (mildly inaccurate now, but still good reference):
 
 # Desktop/Laptop/Big Screen Mobile Devices:
