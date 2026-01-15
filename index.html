@@ -6,34 +6,69 @@
 <title>Unit Circle Practice</title>
 
 <style>
-* { box-sizing:border-box; margin:0; padding:0; font-family:Arial,sans-serif; }
-
+* { margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif; }
 body { background:#fff; }
 
-/* ---------- TOP ---------- */
+/* ---------- TOP PANEL ---------- */
 #topPanel {
-  position:fixed; top:0; left:0; width:100%; height:180px;
-  background:#f8f8f8; border-bottom:1px solid #ccc;
-  display:flex; justify-content:space-around; align-items:center;
-  z-index:10;
+  position:fixed; top:0; left:0;
+  width:100%; height:200px;
+  background:#f8f8f8;
+  border-bottom:1px solid #ccc;
+  display:flex;
+  align-items:center;
+  justify-content:space-around;
+  z-index:1000;
 }
 
 #topTimer { font-size:24px; font-weight:bold; }
 
-.topButtons { display:flex; flex-direction:column; gap:10px; }
-.topButtons button { padding:8px 14px; font-weight:bold; cursor:pointer; }
+.topButtons {
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.topButtons button {
+  padding:8px 14px;
+  font-weight:bold;
+  cursor:pointer;
+}
 
 /* ---------- MAIN ---------- */
-#scrollContainer { margin-top:200px; max-width:900px; margin-inline:auto; }
+#scrollContainer {
+  max-width:900px;
+  margin:200px auto 0;
+  padding-bottom:200px;
+}
+
 h1 { text-align:center; margin-bottom:10px; }
 
-table {
-  width:100%; border-collapse:collapse; border:2px solid black;
+.flex-container {
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+  justify-content:center;
 }
-th,td { border:1px solid black; padding:8px; text-align:center; }
+
+/* ---------- TABLE ---------- */
+table {
+  width:100%;
+  border-collapse:collapse;
+  border:2px solid black;
+}
+
+th, td {
+  border:1px solid black;
+  padding:8px;
+  text-align:center;
+}
 
 td input {
-  width:100%; font-size:16px; padding:6px; text-align:center;
+  width:100%;
+  padding:6px;
+  font-size:16px;
+  text-align:center;
 }
 
 td.given { background:#eee; font-weight:bold; }
@@ -42,22 +77,29 @@ td.incorrect { background:#ffb6c6; }
 
 /* ---------- SYMBOL PANEL ---------- */
 #floatingPanel {
-  position:absolute; display:none;
-  background:white; border:1px solid #999;
-  padding:5px; border-radius:4px;
-  z-index:20;
+  position:absolute;
+  display:none;
+  background:white;
+  border:1px solid #999;
+  padding:5px;
+  border-radius:4px;
+  z-index:2000;
 }
 
 .symbol {
-  display:inline-block; padding:4px 10px;
-  background:#eee; cursor:pointer;
+  display:inline-block;
+  padding:4px 10px;
+  background:#eee;
+  cursor:pointer;
 }
 
 /* ---------- POPUP ---------- */
 #overlay {
-  position:fixed; inset:0;
-  background:rgba(0,0,0,0.4);
-  display:none; z-index:50;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  display:none;
+  z-index:3000;
 }
 
 #popup {
@@ -71,7 +113,6 @@ td.incorrect { background:#ffb6c6; }
   text-align:center;
 }
 
-#popup h2 { margin-bottom:10px; }
 #popup button {
   margin-top:15px;
   padding:8px 20px;
@@ -85,10 +126,17 @@ td.incorrect { background:#ffb6c6; }
 
 <!-- ---------- TOP ---------- -->
 <div id="topPanel">
+  <svg width="150" height="150" viewBox="0 0 300 300">
+    <circle cx="150" cy="150" r="120" fill="none" stroke="black" stroke-width="2"/>
+    <line x1="30" y1="150" x2="270" y2="150" stroke="black" stroke-width="2"/>
+    <line x1="150" y1="30" x2="150" y2="270" stroke="black" stroke-width="2"/>
+  </svg>
+
   <div id="topTimer">00:00</div>
+
   <div class="topButtons">
     <button id="doneBtn">Done</button>
-    <button onclick="location.reload()">Restart</button>
+    <button id="restartBtn">Restart</button>
   </div>
 </div>
 
@@ -96,14 +144,16 @@ td.incorrect { background:#ffb6c6; }
 <div id="scrollContainer">
   <h1>Unit Circle – Solve for All Values</h1>
 
-  <table>
-    <thead>
-      <tr>
-        <th>radians</th><th>degrees</th><th>sin</th><th>cos</th><th>tan</th>
-      </tr>
-    </thead>
-    <tbody id="tableBody"></tbody>
-  </table>
+  <div class="flex-container">
+    <table>
+      <thead>
+        <tr>
+          <th>radians</th><th>degrees</th><th>sin</th><th>cos</th><th>tan</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
 </div>
 
 <!-- ---------- SYMBOL PANEL ---------- -->
@@ -123,6 +173,7 @@ td.incorrect { background:#ffb6c6; }
 </div>
 
 <script>
+/* ---------- DATA ---------- */
 const unitCircleValues = [
  { degrees:0,radians:"0",sin:"0",cos:"1",tan:"0" },
  { degrees:30,radians:"π/6",sin:"1/2",cos:"√3/2",tan:"1/√3" },
@@ -142,15 +193,7 @@ const unitCircleValues = [
  { degrees:330,radians:"11π/6",sin:"-1/2",cos:"√3/2",tan:"-1/√3" }
 ];
 
-let problems=[], seconds=0, timer, lastFocusedInput=null;
-
-/* ---------- TIMER ---------- */
-timer=setInterval(()=>{
-  seconds++;
-  topTimer.textContent=
-    String(Math.floor(seconds/60)).padStart(2,"0")+":"+
-    String(seconds%60).padStart(2,"0");
-},1000);
+let problems=[], timer=null, seconds=0, lastFocusedInput=null;
 
 /* ---------- HELPERS ---------- */
 function shuffle(a){ return [...a].sort(()=>Math.random()-0.5); }
@@ -164,7 +207,7 @@ function normalize(s){
     .replace(/und$/,"und.");
 }
 
-function alt(a){
+function alternatives(a){
   const f=[a];
   if(a==="1/√3") f.push("√3/3");
   if(a==="√3/3") f.push("1/√3");
@@ -174,15 +217,15 @@ function alt(a){
   return f;
 }
 
-function correct(p,c,u){
+function isCorrect(p,c,u){
   if(!u.trim()) return false;
   const n=normalize(u);
   if(n===normalize(p[c])) return true;
-  return alt(p[c]).map(normalize).includes(n);
+  return alternatives(p[c]).map(normalize).includes(n);
 }
 
 /* ---------- TABLE ---------- */
-function render(){
+function renderTable(){
   tableBody.innerHTML="";
   problems.forEach(p=>{
     const tr=document.createElement("tr");
@@ -193,7 +236,7 @@ function render(){
         td.textContent=c==="degrees"?p[c]+"°":p[c];
       } else {
         const i=document.createElement("input");
-        i.onfocus=()=>{lastFocusedInput=i; showPanel(i);};
+        i.onfocus=()=>{ lastFocusedInput=i; showPanel(i); };
         i.onblur=hidePanel;
         td.appendChild(i);
       }
@@ -203,12 +246,25 @@ function render(){
   });
 }
 
+/* ---------- TIMER ---------- */
+function startTimer(){
+  clearInterval(timer);
+  seconds=0;
+  topTimer.textContent="00:00";
+  timer=setInterval(()=>{
+    seconds++;
+    topTimer.textContent=
+      String(Math.floor(seconds/60)).padStart(2,"0")+":"+
+      String(seconds%60).padStart(2,"0");
+  },1000);
+}
+
 /* ---------- CHECK ---------- */
 function checkAnswers(){
   document.activeElement.blur();
   clearInterval(timer);
 
-  let correctCount=0, total=0;
+  let correct=0, total=0;
 
   [...tableBody.rows].forEach((tr,i)=>{
     ["radians","degrees","sin","cos","tan"].forEach((c,j)=>{
@@ -216,27 +272,25 @@ function checkAnswers(){
       if(td.classList.contains("given")) return;
       total++;
       td.classList.remove("correct","incorrect");
-      if(correct(problems[i],c,td.firstChild.value)){
-        td.classList.add("correct");
-        correctCount++;
-      } else {
-        td.classList.add("incorrect");
-      }
+      if(isCorrect(problems[i],c,td.firstChild.value)){
+        td.classList.add("correct"); correct++;
+      } else td.classList.add("incorrect");
     });
   });
 
-  showPopup(correctCount,total);
-}
-
-/* ---------- POPUP ---------- */
-function showPopup(score,total){
-  scoreText.textContent=`Score: ${score} / ${total}`;
-  percentText.textContent=`Percentage: ${Math.round(score/total*100)}%`;
+  scoreText.textContent=`Score: ${correct} / ${total}`;
+  percentText.textContent=`Percentage: ${Math.round(correct/total*100)}%`;
   overlay.style.display="block";
 }
 
-function closePopup(){
+/* ---------- RESTART ---------- */
+function restart(){
   overlay.style.display="none";
+  problems=shuffle(unitCircleValues).map(v=>({
+    ...v, givenType: Math.random()>.5?"radians":"degrees"
+  }));
+  renderTable();
+  startTimer();
 }
 
 /* ---------- SYMBOL PANEL ---------- */
@@ -260,11 +314,9 @@ floatingPanel.querySelectorAll(".symbol").forEach(s=>{
 });
 
 /* ---------- INIT ---------- */
-problems=shuffle(unitCircleValues).map(v=>{
-  return {...v, givenType: Math.random()>.5?"radians":"degrees"};
-});
-render();
+restart();
 doneBtn.onclick=checkAnswers;
+restartBtn.onclick=restart;
 </script>
 
 </body>
