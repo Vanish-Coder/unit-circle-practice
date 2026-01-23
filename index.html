@@ -89,7 +89,7 @@ td.incorrect { background:#ffb6c6; }
 
 <div id="scrollContainer">
   <h1>Unit Circle – Solve for All Values</h1>
-  <div id="note"><h1>For undefined values, type in "und" or "und.". Also for certain values, there are two correct answers because of rationalization. You can type in pi to get the π symbol and s to get the √ symbol.</h1></div>
+  <div id="note"><h1>For undefined values, type in "und" or "und.". Also for certain values, there are two correct answers because of rationalization. You can type in p to get the π symbol and s to get the √ symbol.</h1></div>
 
   <div class="flex-container">
     <div class="flex-item">
@@ -208,7 +208,7 @@ function renderTable(){
           let v = this.value;
 
           if (v.toLowerCase().endsWith("p")) {
-            this.value = v.slice(0, -2) + "π";
+            this.value = v.slice(0, -1) + "π";
             return;
           }
 
