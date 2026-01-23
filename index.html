@@ -154,7 +154,6 @@ doneBtn.disabled = true;
 
 function shuffle(a){ return [...a].sort(()=>Math.random()-0.5); }
 
-// ✅ FIX: always convert input to string first
 function normalize(s){
   s = String(s);
   return s.toLowerCase()
