@@ -207,7 +207,7 @@ function renderTable(){
         inputEl.addEventListener("input", function () {
           let v = this.value;
 
-          if (v.toLowerCase().endsWith("pi")) {
+          if (v.toLowerCase().endsWith("p")) {
             this.value = v.slice(0, -2) + "π";
             return;
           }
