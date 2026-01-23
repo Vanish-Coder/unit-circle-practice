@@ -127,7 +127,7 @@ td.incorrect { background:#ffb6c6; }
 
 <script>
 const unitCircleValues = [
- { degrees:0,radians:"0",sin:"0",cos:"1",tan:"0" },
+ { degrees:0,radians:"0",sin:"0",cos:"1",tan:"0"},
  { degrees:30,radians:"π/6",sin:"1/2",cos:"√3/2",tan:"1/√3" },
  { degrees:45,radians:"π/4",sin:"√2/2",cos:"√2/2",tan:"1" },
  { degrees:60,radians:"π/3",sin:"√3/2",cos:"1/2",tan:"√3" },
@@ -145,7 +145,11 @@ const unitCircleValues = [
  { degrees:330,radians:"11π/6",sin:"-1/2",cos:"√3/2",tan:"-1/√3" }
 ];
 
-let problems=[], timer=null, seconds=0, lastFocusedInput=null;
+let problems = [];
+let timer = null;
+let seconds = 0;
+let lastFocusedInput = null;
+
 const doneBtn = document.getElementById("doneBtn");
 const restartBtn = document.getElementById("restartBtn");
 const floatingPanel = document.getElementById("floatingPanel");
@@ -153,16 +157,18 @@ const inputCache = new Map();
 
 doneBtn.disabled = true;
 
-function shuffle(a){ return [...a].sort(()=>Math.random()-0.5); }
+function shuffle(a){
+  return [...a].sort(() => Math.random() - 0.5);
+}
 
 function normalize(s){
-  s = String(s);
-  return s.toLowerCase()
-          .replace(/\s+/g,"")
-          .replace(/[()]/g,"")
-          .replace(/°/g,"")
-          .replace(/undefined/g,"und.")
-          .replace(/und$/,"und.");
+  return String(s)
+    .toLowerCase()
+    .replace(/\s+/g,"")
+    .replace(/[()]/g,"")
+    .replace(/°/g,"")
+    .replace(/undefined/g,"und.")
+    .replace(/und$/,"und.");
 }
 
 function alternatives(a){
@@ -185,104 +191,149 @@ function isCorrect(p,c,u){
 function renderTable(){
   const tb = document.getElementById("tableBody");
   tb.innerHTML = "";
+
   problems.forEach((p, i) => {
     const tr = document.createElement("tr");
+
     ["radians","degrees","sin","cos","tan"].forEach(c => {
       const td = document.createElement("td");
+
       if(p.givenType === c){
         td.className = "given";
-        td.textContent = c==="degrees"?p[c]+"°":p[c];
+        td.textContent = c==="degrees" ? p[c]+"°" : p[c];
       } else {
         const inputEl = document.createElement("input");
-        inputEl.onfocus = () => { lastFocusedInput = inputEl; showFloatingPanel(inputEl); };
-        inputEl.onblur = () => { floatingPanel.style.display = "none"; };
+
+        // shortcuts: s → √, pi → π
+        inputEl.addEventListener("input", function () {
+          let v = this.value;
+
+          if (v.toLowerCase().endsWith("pi")) {
+            this.value = v.slice(0, -2) + "π";
+            return;
+          }
+
+          if (v.toLowerCase().endsWith("s")) {
+            this.value = v.slice(0, -1) + "√";
+          }
+        });
+
+        inputEl.onfocus = () => {
+          lastFocusedInput = inputEl;
+          showFloatingPanel(inputEl);
+        };
+
+        inputEl.onblur = () => {
+          floatingPanel.style.display = "none";
+        };
+
         td.appendChild(inputEl);
         inputCache.set(`${i}-${c}`, inputEl);
       }
+
       tr.appendChild(td);
     });
+
     tb.appendChild(tr);
   });
 }
 
 function startTimer(){
   clearInterval(timer);
-  seconds=0;
+  seconds = 0;
   document.getElementById("topTimer").textContent="00:00";
-  timer=setInterval(()=>{
+
+  timer = setInterval(() => {
     seconds++;
-    const m=String(Math.floor(seconds/60)).padStart(2,"0");
-    const s=String(seconds%60).padStart(2,"0");
-    document.getElementById("topTimer").textContent=`${m}:${s}`;
+    const m = String(Math.floor(seconds/60)).padStart(2,"0");
+    const s = String(seconds%60).padStart(2,"0");
+    document.getElementById("topTimer").textContent = `${m}:${s}`;
   },1000);
 }
 
 function checkAnswers(){
   document.activeElement.blur();
   clearInterval(timer);
-  let correct=0,total=0;
+
+  let correct = 0;
+  let total = 0;
+
   [...document.querySelectorAll("#tableBody tr")].forEach((tr,i)=>{
     ["radians","degrees","sin","cos","tan"].forEach((c,j)=>{
       const td = tr.children[j];
       if(td.classList.contains("given")) return;
+
       total++;
       const inputEl = inputCache.get(`${i}-${c}`);
       if(!inputEl) return;
-      const val = inputEl.value.trim();
+
       td.classList.remove("correct","incorrect");
-      if(isCorrect(problems[i],c,val)) {
-       td.classList.add("correct");
-      correct++;   // count correct answers
+
+      if(isCorrect(problems[i],c,inputEl.value)){
+        td.classList.add("correct");
+        correct++;
       } else {
-      td.classList.add("incorrect");
-  }
+        td.classList.add("incorrect");
+      }
     });
   });
-  document.getElementById("scoreText").textContent=`Score: ${correct} / ${total}`;
-  document.getElementById("percentText").textContent=`Percentage: ${Math.round(correct/total*100)}%`;
+
+  document.getElementById("scoreText").textContent = `Score: ${correct} / ${total}`;
+  document.getElementById("percentText").textContent = `Percentage: ${Math.round(correct/total*100)}%`;
   document.getElementById("overlay").style.display="block";
 }
 
 function showFloatingPanel(i){
-  const r=i.getBoundingClientRect();
+  const r = i.getBoundingClientRect();
   floatingPanel.style.display="block";
-  floatingPanel.style.top=(window.scrollY+r.top-floatingPanel.offsetHeight-5)+"px";
-  floatingPanel.style.left=(window.scrollX+r.left)+"px";
+  floatingPanel.style.top = (window.scrollY + r.top - floatingPanel.offsetHeight - 5) + "px";
+  floatingPanel.style.left = (window.scrollX + r.left) + "px";
 }
 
 document.querySelectorAll(".symbol").forEach(s=>{
-  s.onmousedown=e=>{
+  s.onmousedown = e=>{
     e.preventDefault();
     if(!lastFocusedInput) return;
-    const i = lastFocusedInput, p = i.selectionStart;
-    i.value = i.value.slice(0,p)+s.dataset.symbol+i.value.slice(p);
-    i.selectionStart=i.selectionEnd=p+1;
+
+    const i = lastFocusedInput;
+    const p = i.selectionStart;
+    i.value = i.value.slice(0,p) + s.dataset.symbol + i.value.slice(p);
+    i.selectionStart = i.selectionEnd = p + 1;
     i.focus();
   };
 });
 
-document.getElementById("closePopupBtn").onclick = function() {
+document.getElementById("closePopupBtn").onclick = () => {
   document.getElementById("overlay").style.display="none";
 };
 
 function drawCircle(){
   const linesG = document.getElementById("angleLines");
   const pointsG = document.getElementById("anglePoints");
-  linesG.innerHTML=""; pointsG.innerHTML="";
-  const cx=150,cy=150,r=120;
+  linesG.innerHTML=""; 
+  pointsG.innerHTML="";
+
+  const cx=150, cy=150, r=120;
   const degrees=[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330];
+
   degrees.forEach(d=>{
     const rad=d*Math.PI/180;
     const x=cx+r*Math.cos(rad);
     const y=cy-r*Math.sin(rad);
+
     const l=document.createElementNS("http://www.w3.org/2000/svg","line");
-    l.setAttribute("x1",cx); l.setAttribute("y1",cy);
-    l.setAttribute("x2",x); l.setAttribute("y2",y);
-    l.setAttribute("stroke","#ccc"); l.setAttribute("stroke-width","1");
+    l.setAttribute("x1",cx);
+    l.setAttribute("y1",cy);
+    l.setAttribute("x2",x);
+    l.setAttribute("y2",y);
+    l.setAttribute("stroke","#ccc");
     linesG.appendChild(l);
+
     const p=document.createElementNS("http://www.w3.org/2000/svg","circle");
-    p.setAttribute("cx",x); p.setAttribute("cy",y);
-    p.setAttribute("r","3"); p.setAttribute("fill","black");
+    p.setAttribute("cx",x);
+    p.setAttribute("cy",y);
+    p.setAttribute("r","3");
+    p.setAttribute("fill","black");
     pointsG.appendChild(p);
   });
 }
@@ -290,19 +341,26 @@ function drawCircle(){
 function drawMiniCircle(){
   const linesG=document.getElementById("miniAngleLines");
   linesG.innerHTML="";
-  const cx=150,cy=150,r=120;
+
+  const cx=150, cy=150, r=120;
   const degrees=[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330];
+
   degrees.forEach(d=>{
     const rad=d*Math.PI/180;
     const x=cx+r*Math.cos(rad);
     const y=cy-r*Math.sin(rad);
+
     const l=document.createElementNS("http://www.w3.org/2000/svg","line");
-    l.setAttribute("x1",cx); l.setAttribute("y1",cy);
-    l.setAttribute("x2",x); l.setAttribute("y2",y);
-    l.setAttribute("stroke","#ccc"); l.setAttribute("stroke-width","1");
+    l.setAttribute("x1",cx);
+    l.setAttribute("y1",cy);
+    l.setAttribute("x2",x);
+    l.setAttribute("y2",y);
+    l.setAttribute("stroke","#ccc");
     linesG.appendChild(l);
+
     const p=document.createElementNS("http://www.w3.org/2000/svg","circle");
-    p.setAttribute("cx",x); p.setAttribute("cy",y);
+    p.setAttribute("cx",x);
+    p.setAttribute("cy",y);
     p.setAttribute("r","2");
     p.setAttribute("fill","black");
     linesG.appendChild(p);
@@ -311,7 +369,10 @@ function drawMiniCircle(){
 
 function init(){
   doneBtn.disabled = true;
-  problems = shuffle(unitCircleValues).map(v=>({...v,givenType:Math.random()>.5?"radians":"degrees"}));
+
+  problems = shuffle(unitCircleValues)
+    .map(v => ({...v, givenType: Math.random() > 0.5 ? "radians" : "degrees"}));
+
   renderTable();
   drawCircle();
   drawMiniCircle();
@@ -320,12 +381,16 @@ function init(){
 }
 
 doneBtn.onclick = () => {
-  if(document.activeElement instanceof HTMLInputElement) document.activeElement.blur();
+  if(document.activeElement instanceof HTMLInputElement){
+    document.activeElement.blur();
+  }
   setTimeout(checkAnswers, 10);
 };
+
 restartBtn.onclick = init;
 
 init();
 </script>
+
 </body>
 </html>
