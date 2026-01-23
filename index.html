@@ -204,11 +204,10 @@ function renderTable(){
       } else {
         const inputEl = document.createElement("input");
 
-        // shortcuts: s → √, pi → π
         inputEl.addEventListener("input", function () {
           let v = this.value;
 
-          if (v.toLowerCase().endsWith("pi")) {
+          if (v.toLowerCase().endsWith("pi") || v.toLowerCase().endWith("p")) {
             this.value = v.slice(0, -2) + "π";
             return;
           }
