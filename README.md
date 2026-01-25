@@ -11,9 +11,6 @@ ________________________________________________________________________________
 
 # Site Link (also in description): https://vanish-coder.github.io/unit-circle-practice/
 
-# QR Code for Site:
-<img width="250" height="250" alt="qrcode_vanish-coder github io" src="https://github.com/user-attachments/assets/24281cbc-beb6-4ada-b703-b694a835776b" />
-
 # Instructions/Other Notes (Some of These Are on Site):
 
 ## - This is a practice site for unit circle values and trig values.
