@@ -2,7 +2,7 @@
 
 # Site Link (also in description): https://vanish-coder.github.io/unit-circle-practice/
 
-# Instructions/Other Notes (Some of These are on Site):
+# Instructions/Other Notes (Some of These Are on Site):
 
 ## - Extremely mobile friendly. Every feature that works on laptop works on mobile (albiet some may be slower for the user to use becuase of mobile limitations like fast keyboard support).
 
