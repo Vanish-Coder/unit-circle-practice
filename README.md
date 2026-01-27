@@ -1,5 +1,15 @@
 # Unit Circle Practice
 
+# Instructions/Other Notes (Some of These Are on Site):
+
+## - Extremely mobile friendly. Every feature that works on laptop works on mobile (albiet some may be slower for the user to use becuase of mobile limitations like fast keyboard support).
+
+## - This is a practice site for unit circle values and trig values.
+
+## - Press restart to rerun your numbers (and restart the timer) and press done to check your work.
+
+## - Press on the special symbols (square root and pi for this site) to type them in the focused text box.
+
 # How it Looks (mildly inaccurate now, but still good reference):
 
 # Desktop/Laptop/Big Screen Mobile Devices:
@@ -11,11 +21,4 @@ ________________________________________________________________________________
 
 # Site Link (also in description): https://vanish-coder.github.io/unit-circle-practice/
 
-# Instructions/Other Notes (Some of These Are on Site):
-
-## - This is a practice site for unit circle values and trig values.
-
-## - Press restart to rerun your numbers (and restart the timer) and press done to check your work.
-
-## - Press on the special symbols (square root and pi for this site) to type them in the focused text box.
 
