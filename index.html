@@ -12,6 +12,44 @@
 html, body { height:100%; }
 body { background:#fff; }
 
+/* ---------- LICENSE POPUP ---------- */
+#licenseOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 20000;
+}
+
+#licensePopup {
+  background: #fff;
+  width: 360px;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+
+#licensePopup a {
+  word-break: break-all;
+}
+
+#licensePopup label {
+  display: block;
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+#licensePopup button {
+  margin-top: 15px;
+  padding: 8px 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+
 #topPanel {
   position: fixed;
   top:0; left:0;
@@ -29,8 +67,12 @@ body { background:#fff; }
 #topTimer { font-size:24px; font-weight:bold; }
 
 .topButtons { display:flex; flex-direction: column; gap:10px; }
-.topButtons button { padding:8px 14px; font-weight:bold; cursor:pointer;For undefined values, type in "und."
- min-width:90px; }
+.topButtons button { 
+  padding:8px 14px; 
+  font-weight:bold; 
+  cursor:pointer;
+  min-width:90px; 
+}
 
 #scrollContainer {
   max-width:900px;
@@ -74,6 +116,25 @@ td.incorrect { background:#ffb6c6; }
 </style>
 </head>
 <body>
+<!-- LICENSE POPUP -->
+<div id="licenseOverlay">
+  <div id="licensePopup">
+    <p>
+      This site is under an MIT License. It is open-source and you can view it here:
+      <br><br>
+      <a href="https://github.com/Vanish-Coder/unit-circle-practice" target="_blank">
+        GitHub Repository
+      </a>
+    </p>
+
+    <label>
+      <input type="checkbox" id="dontShowAgain">
+      Don’t show again
+    </label>
+
+    <button id="closeLicenseBtn">Close</button>
+  </div>
+</div>
 
 <div id="topPanel">
   <svg id="topMiniCircle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">
@@ -389,6 +450,21 @@ doneBtn.onclick = () => {
 restartBtn.onclick = init;
 
 init();
+
+/* ---------- LICENSE POPUP LOGIC ---------- */
+window.addEventListener("load", () => {
+  if (!localStorage.getItem("hideLicensePopup")) {
+    document.getElementById("licenseOverlay").style.display = "flex";
+  }
+});
+
+document.getElementById("closeLicenseBtn").onclick = () => {
+  if (document.getElementById("dontShowAgain").checked) {
+    localStorage.setItem("hideLicensePopup", "true");
+  }
+  document.getElementById("licenseOverlay").style.display = "none";
+};
+
 </script>
 
 </body>
