@@ -436,7 +436,7 @@ function init(){
   renderTable();
   drawCircle();
   drawMiniCircle();
-  startTimer();
+  //startTimer();
   doneBtn.disabled = false;
 }
 
@@ -447,23 +447,41 @@ doneBtn.onclick = () => {
   setTimeout(checkAnswers, 10);
 };
 
-restartBtn.onclick = init;
+restartBtn.onclick = () => startPractice(true);
 
-init();
+window.addEventListener("load", () => startPractice(false));
 
-/* ---------- LICENSE POPUP LOGIC ---------- */
-window.addEventListener("load", () => {
-  if (!localStorage.getItem("hideLicensePopup")) {
-    document.getElementById("licenseOverlay").style.display = "flex";
-  }
-});
+function startPractice(isRestart = false) {
+    init(); // set up the problems and draw circles
 
-document.getElementById("closeLicenseBtn").onclick = () => {
-  if (document.getElementById("dontShowAgain").checked) {
-    localStorage.setItem("hideLicensePopup", "true");
-  }
-  document.getElementById("licenseOverlay").style.display = "none";
-};
+    if (!isRestart) {
+    const hidePopup = localStorage.getItem("hideLicensePopup");
+
+    if (hidePopup) {
+        startTimer(); // start immediately if user has chosen not to see the popup
+    } else {
+        const licenseOverlay = document.getElementById("licenseOverlay");
+        const closeBtn = document.getElementById("closeLicenseBtn");
+
+        // define the click handler first
+        closeBtn.onclick = () => {
+            if (document.getElementById("dontShowAgain").checked) {
+                localStorage.setItem("hideLicensePopup", "true");
+            }
+            licenseOverlay.style.display = "none";
+            startTimer(); // timer starts after popup closed
+        };
+
+        // then show the popup
+        licenseOverlay.style.display = "flex";
+    }
+} else {
+    // Restart pressed → start timer immediately
+    startTimer();
+}
+
+}
+
 
 </script>
 
