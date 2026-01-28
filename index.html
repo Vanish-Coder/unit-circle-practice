@@ -458,7 +458,7 @@ function startPractice(isRestart = false) {
     const hidePopup = localStorage.getItem("hideLicensePopup");
 
     if (hidePopup) {
-        startTimer(); // start immediately if user has chosen not to see the popup
+        startTimer(); // start immediately if popup gone
     } else {
         const licenseOverlay = document.getElementById("licenseOverlay");
         const closeBtn = document.getElementById("closeLicenseBtn");
@@ -469,14 +469,13 @@ function startPractice(isRestart = false) {
                 localStorage.setItem("hideLicensePopup", "true");
             }
             licenseOverlay.style.display = "none";
-            startTimer(); // timer starts after popup closed
+            startTimer(); 
         };
 
-        // then show the popup
+        
         licenseOverlay.style.display = "flex";
     }
 } else {
-    // Restart pressed → start timer immediately
     startTimer();
 }
 
