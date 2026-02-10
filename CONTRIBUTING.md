@@ -1,0 +1,3 @@
+# About Modding/Contributing
+
+This software is under a MIT license, so there is no obligation to publish the source code for any modifications that may be made.  The main place to send a question about any potential implemention questions is in this repository's discussion tab, specifically in the Q&A tab ([https://github.com/Vanish-Coder/spelling-bee-practice/discussions](https://github.com/Vanish-Coder/unit-circle-practice/discussions/categories/q-a)). Any and all contributions that are helpful are welcome. However, any contribution that is deemed unnecessary/not useful will not be accepted.
