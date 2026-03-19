@@ -455,7 +455,7 @@ function startPractice(isRestart = false) {
     init(); // set up the problems and draw circles
 
     if (!isRestart) {
-    const hidePopup = localStorage.getItem("hideLicensePopup");
+    const hidePopup = localStorage.getItem("hidePopup");
 
     if (hidePopup) {
         startTimer(); // start immediately if popup gone
@@ -466,7 +466,7 @@ function startPractice(isRestart = false) {
         // define the click handler first
         closeBtn.onclick = () => {
             if (document.getElementById("dontShowAgain").checked) {
-                localStorage.setItem("hideLicensePopup", "true");
+                localStorage.setItem("hidePopup", "true");
             }
             licenseOverlay.style.display = "none";
             startTimer(); 
